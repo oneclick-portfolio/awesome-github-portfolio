@@ -1,0 +1,36 @@
+const CONFIG = {
+  paths: {
+    resumeData: '/resume/Reactive Resume.json',
+    profileArt: '/src/profile.html',
+    faviconSvg: '/favicon.svg',
+    faviconIco: '/favicon.ico'
+  },
+  theme: {
+    colors: {
+      dark: '#0b0f14',
+      light: '#f8f9fa'
+    },
+    icons: {
+      dark: '☾',
+      light: '☀'
+    }
+  },
+  storage: {
+    theme: 'theme'
+  },
+  animation: {
+    tilt: {
+      perspective: '900px',
+      range: 8
+    }
+  },
+  errors: {
+    resumeLoadError: '<div style="padding: 2rem; text-align: center;"><h1>Error loading resume data</h1><p>Ensure resume/Reactive Resume.json is valid RxResume JSON.</p></div>',
+    profileArtNotFound: 'Profile art not found.'
+  },
+  fallbacks: {
+    profileArt: ''
+  }
+};
+
+window.CONFIG = CONFIG;
