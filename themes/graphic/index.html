@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f5f0e1" />
+  <title>Graphic Theme</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="poster">
+    <!-- Header Bar -->
+    <header class="poster-header">
+      <div class="poster-header-inner">
+        <div class="poster-brand">
+          <span class="poster-brand-dot"></span>
+          <span class="poster-brand-name" data-name></span>
+        </div>
+        <nav class="poster-nav">
+          <a href="#p-experience">Experience</a>
+          <a href="#p-projects">Projects</a>
+          <a href="#p-skills">Skills</a>
+          <a class="poster-email-btn" id="emailLink" target="_blank" rel="noopener">Email</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero: Name + Subtitle -->
+    <section class="poster-hero">
+      <h1 class="poster-name" data-name></h1>
+      <p class="poster-headline" data-headline></p>
+    </section>
+
+    <!-- Two Column Layout -->
+    <div class="poster-body">
+      <!-- Left Column -->
+      <div class="poster-col-left">
+        <!-- Profile + Summary -->
+        <section class="poster-intro">
+          <div class="poster-profile" id="profileArt"></div>
+          <div class="poster-summary">
+            <p id="summaryText"></p>
+            <div class="poster-ctas">
+              <a id="githubLink" class="poster-cta-btn" target="_blank" rel="noopener">GITHUB</a>
+              <a id="linkedinLink" class="poster-cta-btn" target="_blank" rel="noopener">LINKEDIN</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Profiles -->
+        <section class="poster-section">
+          <h2 class="poster-section-title" id="profilesTitle"></h2>
+          <div class="poster-expertise-grid" id="profilesGrid"></div>
+        </section>
+      </div>
+
+      <!-- Right Column -->
+      <div class="poster-col-right">
+        <!-- Experience -->
+        <section id="p-experience" class="poster-section">
+          <h2 class="poster-section-title">Experience</h2>
+          <div id="experienceList" class="poster-timeline"></div>
+        </section>
+
+        <!-- Projects -->
+        <section id="p-projects" class="poster-section">
+          <h2 class="poster-section-title">PROJECTS</h2>
+          <div id="projectsGrid" class="poster-projects-grid"></div>
+        </section>
+
+        <!-- Skills -->
+        <section id="p-skills" class="poster-section">
+          <h2 class="poster-section-title">SKILLS</h2>
+          <div id="skillsCloud" class="poster-skills"></div>
+        </section>
+
+        <!-- Languages -->
+        <section class="poster-section">
+          <h2 class="poster-section-title">LANGUAGES</h2>
+          <div id="languagesList" class="poster-languages"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="poster-footer">
+      <div class="poster-footer-inner">
+        <strong class="poster-footer-text" id="footerHeadline"></strong>
+        <span class="poster-footer-location" id="footerLocation"></span>
+        <div class="poster-footer-links">
+          <a id="footerGithub" target="_blank" rel="noopener">GitHub</a>
+          <a id="footerLinkedin" target="_blank" rel="noopener">LinkedIn</a>
+          <a id="footerEmail" target="_blank" rel="noopener">Email</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../../config.js"></script>
+  <script src="../../src/rxresume.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

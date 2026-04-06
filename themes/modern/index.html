@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0f14" />
+  <title>Portfolio</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="theme-dark">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#top" class="brand" aria-label="Home">
+        <span class="brand-dot" aria-hidden="true"></span>
+        <span class="brand-name" data-name></span>
+      </a>
+      <nav class="nav">
+        <a href="#experience" class="nav-link">Experience</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#skills" class="nav-link">Skills</a>
+        <a class="btn btn-primary" id="emailLink" target="_blank" rel="noopener">Email</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <h1 class="hero-title"><span data-name></span></h1>
+          <p class="hero-subtitle" data-headline></p>
+          <p class="hero-summary" id="summaryText"></p>
+          <div class="hero-ctas">
+            <a id="githubLink" class="btn btn-ghost" target="_blank" rel="noopener">GitHub</a>
+            <a id="linkedinLink" class="btn btn-ghost" target="_blank" rel="noopener">LinkedIn</a>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="orb orb-1"></div>
+          <div class="orb orb-2"></div>
+          <div class="grid-glow"></div>
+          <div class="profile-art" id="profileArt"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Experience</h2>
+        </div>
+        <div id="experienceList" class="timeline"></div>
+      </div>
+    </section>
+
+    <section id="projects" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Projects</h2>
+        </div>
+        <div id="projectsGrid" class="card-grid projects"></div>
+      </div>
+    </section>
+
+    <section id="education" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Education</h2>
+        </div>
+        <div id="educationList" class="edu-list"></div>
+      </div>
+    </section>
+
+    <section id="skills" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Skills</h2>
+        </div>
+        <div id="skillsCloud" class="skills-cloud"></div>
+      </div>
+    </section>
+
+    <section id="languages" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Languages</h2>
+        </div>
+        <div id="languagesList" class="languages-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong id="footerHeadline"></strong>
+        <div class="muted" id="footerLocation"></div>
+      </div>
+      <div class="footer-links">
+        <a id="footerGithub" target="_blank" rel="noopener">GitHub</a>
+        <a id="footerLinkedin" target="_blank" rel="noopener">LinkedIn</a>
+        <a id="footerEmail" target="_blank" rel="noopener">Email</a>
+        <a href="/index.html">Themes</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../config.js"></script>
+  <script src="../../src/rxresume.js"></script>
+  <script src="./app.js" type="module"></script>
+</body>
+</html>

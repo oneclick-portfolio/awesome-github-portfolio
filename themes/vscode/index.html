@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#1e1e2e" />
+  <title>VS Code Theme</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="vsc">
+    <!-- Title Bar -->
+    <div class="vsc-titlebar">
+      <div class="vsc-titlebar-left">
+        <span class="vsc-menu-item">File</span>
+        <span class="vsc-menu-item">Edit</span>
+        <span class="vsc-menu-item">Selection</span>
+        <span class="vsc-menu-item">View</span>
+        <span class="vsc-menu-item">Run</span>
+        <span class="vsc-menu-item">Terminal</span>
+        <span class="vsc-menu-item">Help</span>
+      </div>
+      <div class="vsc-titlebar-center" data-name></div>
+      <div class="vsc-titlebar-right">
+        <span class="vsc-win-btn">─</span>
+        <span class="vsc-win-btn">□</span>
+        <span class="vsc-win-btn vsc-win-close">×</span>
+      </div>
+    </div>
+
+    <div class="vsc-main">
+      <!-- Activity Bar -->
+      <div class="vsc-activity-bar">
+        <div class="vsc-activity-icon active" data-panel="explorer" title="Explorer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+        </div>
+        <div class="vsc-activity-icon" data-panel="search" title="Search">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </div>
+        <div class="vsc-activity-icon" data-panel="git" title="Source Control">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 009 9"/></svg>
+        </div>
+        <div class="vsc-activity-icon" title="Extensions">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </div>
+        <div class="vsc-activity-bottom">
+          <a href="/index.html" class="vsc-activity-icon" title="Theme Picker">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Sidebar / Explorer -->
+      <div class="vsc-sidebar" id="sidebar">
+        <div class="vsc-sidebar-header">EXPLORER</div>
+        <div class="vsc-sidebar-section">
+          <div class="vsc-tree-header">
+            <span class="vsc-tree-arrow">▾</span> src
+          </div>
+          <div class="vsc-tree-items">
+            <div class="vsc-tree-item active" data-tab="about_me">
+              <span class="vsc-file-icon go">⛓</span> about_me.go
+            </div>
+            <div class="vsc-tree-item" data-tab="experience">
+              <span class="vsc-file-icon yml">!</span> experience.yml
+            </div>
+            <div class="vsc-tree-item" data-tab="projects">
+              <span class="vsc-file-icon json">{}</span> projects.json
+            </div>
+            <div class="vsc-tree-item" data-tab="skills">
+              <span class="vsc-file-icon toml">⛭</span> skills.toml
+            </div>
+            <div class="vsc-tree-item" data-tab="contact">
+              <span class="vsc-file-icon md">♦</span> contact.md
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Editor Area -->
+      <div class="vsc-editor-area">
+        <!-- Tabs -->
+        <div class="vsc-tabs">
+          <div class="vsc-tab active" data-tab="about_me">
+            <span class="vsc-file-icon go">⛓</span> about_me.go <span class="vsc-tab-close">×</span>
+          </div>
+          <div class="vsc-tab" data-tab="experience">
+            <span class="vsc-file-icon yml">!</span> experience.yml <span class="vsc-tab-close">×</span>
+          </div>
+          <div class="vsc-tab" data-tab="projects">
+            <span class="vsc-file-icon json">{}</span> projects.json <span class="vsc-tab-close">×</span>
+          </div>
+          <div class="vsc-tab" data-tab="skills">
+            <span class="vsc-file-icon toml">⛭</span> skills.toml <span class="vsc-tab-close">×</span>
+          </div>
+          <div class="vsc-tab" data-tab="contact">
+            <span class="vsc-file-icon md">♦</span> contact.md <span class="vsc-tab-close">×</span>
+          </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="vsc-breadcrumb">
+          <span>src</span> <span class="vsc-breadcrumb-sep">›</span> <span id="breadcrumbFile">about_me.go</span>
+        </div>
+
+        <!-- Editor Panels -->
+        <div class="vsc-editor-content">
+          <!-- about_me.go -->
+          <div class="vsc-panel active" id="panel-about_me"></div>
+          <!-- experience.yml -->
+          <div class="vsc-panel" id="panel-experience"></div>
+          <!-- projects.json -->
+          <div class="vsc-panel" id="panel-projects"></div>
+          <!-- skills.toml -->
+          <div class="vsc-panel" id="panel-skills"></div>
+          <!-- contact.md -->
+          <div class="vsc-panel" id="panel-contact"></div>
+        </div>
+
+        <!-- Terminal -->
+        <div class="vsc-terminal" id="terminal">
+          <div class="vsc-terminal-tabs">
+            <span class="vsc-terminal-tab-label">PROBLEMS</span>
+            <span class="vsc-terminal-tab-label">OUTPUT</span>
+            <span class="vsc-terminal-tab-label">DEBUG CONSOLE</span>
+            <span class="vsc-terminal-tab-label active">TERMINAL</span>
+          </div>
+          <div class="vsc-terminal-body" id="terminalBody">
+            <div class="vsc-term-line">
+              <span class="vsc-term-prompt">arindam@portfolio</span>:<span class="vsc-term-path">~/code</span>$ <span class="vsc-term-cmd">go run about_me.go</span>
+            </div>
+            <div class="vsc-term-line vsc-term-output">Profile loaded successfully!</div>
+            <div class="vsc-term-line">
+              <span class="vsc-term-prompt">arindam@portfolio</span>:<span class="vsc-term-path">~/code</span>$ <span class="vsc-term-cursor">▊</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="vsc-statusbar">
+      <div class="vsc-statusbar-left">
+        <span class="vsc-status-item vsc-status-branch">⎇ branch</span>
+        <span class="vsc-status-item">⊘ 0 ▲ 0</span>
+      </div>
+      <div class="vsc-statusbar-right">
+        <span class="vsc-status-item" id="statusLine">Ln 2, Col 1</span>
+        <span class="vsc-status-item">Spaces: 4</span>
+        <span class="vsc-status-item">UTF-8</span>
+        <span class="vsc-status-item">CRLF</span>
+        <span class="vsc-status-item" id="statusLang">Go</span>
+        <span class="vsc-status-item vsc-status-theme">Dracula</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../config.js"></script>
+  <script src="../../src/rxresume.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
