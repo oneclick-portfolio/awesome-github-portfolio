@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111827" />
+  <title>Developer Redesign</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="container nav-bar">
+        <a class="brand" href="#top" aria-label="Jump to top">
+          <span class="brand-mark"></span>
+          <span class="brand-copy">
+            <span class="brand-label">Portfolio</span>
+            <span class="brand-name" data-name></span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="#experience">Experience</a>
+          <a href="#projects">Projects</a>
+          <a href="#craft">Craft</a>
+          <a id="emailLink" class="nav-cta" target="_blank" rel="noopener">Email</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero-section">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Modern Developer Portfolio Redesign</p>
+            <h1 class="hero-title">
+              Building thoughtful digital systems with
+              <span class="hero-accent">clarity and range</span>
+            </h1>
+            <p class="hero-headline" data-headline></p>
+            <div class="hero-summary" id="summaryText"></div>
+            <div class="hero-actions">
+              <a id="githubLink" class="button button-primary" target="_blank" rel="noopener">GitHub</a>
+              <a id="linkedinLink" class="button button-secondary" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
+            <div class="hero-meta">
+              <div class="meta-card">
+                <span class="meta-label">Based in</span>
+                <strong id="heroLocation"></strong>
+              </div>
+              <div class="meta-card">
+                <span class="meta-label">Selected work</span>
+                <strong id="projectCount">0 projects</strong>
+              </div>
+              <div class="meta-card">
+                <span class="meta-label">Experience</span>
+                <strong id="experienceCount">0 roles</strong>
+              </div>
+            </div>
+          </div>
+
+          <aside class="hero-panel">
+            <div class="portrait-card">
+              <div class="portrait-frame" id="profileArt"></div>
+            </div>
+            <div class="signal-card">
+              <div class="signal-card-head">
+                <span class="signal-dot"></span>
+                <span>Quick profile</span>
+              </div>
+              <div class="signal-name" data-name></div>
+              <div class="signal-lines">
+                <span data-headline></span>
+                <span id="signalWebsite"></span>
+                <span id="signalEmail"></span>
+              </div>
+              <div class="profile-list" id="profilesGrid"></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="strip-section">
+        <div class="container strip-grid">
+          <article class="strip-card">
+            <span class="strip-label">Profile</span>
+            <strong id="footerHeadline"></strong>
+          </article>
+          <article class="strip-card">
+            <span class="strip-label">Location</span>
+            <strong id="footerLocation"></strong>
+          </article>
+          <article class="strip-card">
+            <span class="strip-label">Links</span>
+            <div class="inline-links">
+              <a id="footerGithub" target="_blank" rel="noopener">GitHub</a>
+              <a id="footerLinkedin" target="_blank" rel="noopener">LinkedIn</a>
+              <a id="footerEmail" target="_blank" rel="noopener">Email</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="experience" class="content-section">
+        <div class="container section-grid">
+          <div class="section-intro">
+            <p class="section-kicker">Experience</p>
+            <h2>Recent roles and delivery highlights.</h2>
+          </div>
+          <div class="section-body timeline" id="experienceList"></div>
+        </div>
+      </section>
+
+      <section id="projects" class="content-section alt-surface">
+        <div class="container section-grid">
+          <div class="section-intro">
+            <p class="section-kicker">Projects</p>
+            <h2>Shipped products, experiments, and public work.</h2>
+          </div>
+          <div class="section-body project-grid" id="projectsGrid"></div>
+        </div>
+      </section>
+
+      <section id="craft" class="content-section">
+        <div class="container craft-grid">
+          <section class="craft-panel">
+            <div class="panel-head">
+              <p class="section-kicker">Skills</p>
+              <h2>Tools and specialties.</h2>
+            </div>
+            <div class="skills-cloud" id="skillsCloud"></div>
+          </section>
+
+          <section class="craft-panel">
+            <div class="panel-head">
+              <p class="section-kicker">Education</p>
+              <h2>Learning foundation.</h2>
+            </div>
+            <div class="education-list" id="educationList"></div>
+          </section>
+
+          <section class="craft-panel craft-panel-wide">
+            <div class="panel-head">
+              <p class="section-kicker">Languages</p>
+              <h2>Communication range.</h2>
+            </div>
+            <div class="language-list" id="languagesList"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../../config.js"></script>
+  <script src="../../src/rxresume.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

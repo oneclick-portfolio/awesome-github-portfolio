@@ -229,10 +229,12 @@ async function loadProfileArt() {
     const pictureUrl = window.RxResumeData.getPictureUrl(resume);
 
     if (pictureUrl) {
-      // Create container with aspect ratio
+      const pictureWidth = profileArt.clientWidth || pictureMeta.width || pictureMeta.size || 200;
+      const pictureHeight = profileArt.clientHeight || pictureMeta.height || (pictureWidth / (pictureMeta.aspectRatio || 1));
+
       const container = document.createElement('div');
-      container.style.width = (pictureMeta.size || 200) + 'px';
-      container.style.aspectRatio = (pictureMeta.aspectRatio || 1);
+      container.style.width = pictureWidth + 'px';
+      container.style.height = pictureHeight + 'px';
       container.style.overflow = 'hidden';
       container.style.position = 'relative';
       

@@ -3,105 +3,93 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#d4c5a0" />
+  <meta name="theme-color" content="#ffffff" />
   <title>Newspaper Theme</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <div class="paper">
-    <!-- Header -->
-    <header class="np-header">
-      <div class="np-header-inner">
-        <div class="np-brand">
-          <span class="np-brand-dot"></span>
-          <span class="np-brand-name" data-name></span>
-        </div>
-        <nav class="np-nav">
-          <a href="#np-experience">Experience</a>
-          <a href="#np-projects">Projects</a>
-          <a href="#np-skills">Skills</a>
-          <a class="np-email-btn" id="emailLink" target="_blank" rel="noopener">Email</a>
-        </nav>
-      </div>
-    </header>
-
-    <!-- Two-column newspaper body -->
-    <div class="np-body">
-      <!-- LEFT COLUMN -->
-      <div class="np-col-left">
-        <!-- Hero -->
-        <section class="np-hero">
-          <h1 class="np-name" data-name></h1>
-          <p class="np-subtitle" data-headline></p>
-        </section>
-
-        <!-- Profile + Summary -->
-        <section class="np-intro">
-          <div class="np-photo-frame">
-            <div class="np-photo" id="profileArt"></div>
-          </div>
-          <div class="np-summary">
-            <p id="summaryText"></p>
-            <div class="np-ctas">
-              <a id="githubLink" class="np-cta" target="_blank" rel="noopener">GitHub</a>
-              <a id="linkedinLink" class="np-cta" target="_blank" rel="noopener">LinkedIn</a>
-            </div>
-          </div>
-        </section>
-
-        <!-- Profiles -->
-        <section class="np-section">
-          <h2 class="np-section-title" id="profilesTitle"></h2>
-          <div class="np-expertise-grid" id="profilesGrid"></div>
-        </section>
-      </div>
-
-      <!-- RIGHT COLUMN -->
-      <div class="np-col-right">
-        <!-- Experience -->
-        <section id="np-experience" class="np-section">
-          <h2 class="np-section-title">Experience</h2>
-          <div id="experienceList" class="np-timeline"></div>
-        </section>
-
-        <!-- Projects -->
-        <section id="np-projects" class="np-section">
-          <h2 class="np-section-title">Projects</h2>
-          <div id="projectsGrid" class="np-projects-grid"></div>
-        </section>
-
-        <!-- Skills -->
-        <section id="np-skills" class="np-section">
-          <h2 class="np-section-title">Skills</h2>
-          <div id="skillsCloud" class="np-skills"></div>
-        </section>
-
-        <!-- Languages -->
-        <section class="np-section">
-          <h2 class="np-section-title">Languages</h2>
-          <div id="languagesList" class="np-languages"></div>
-        </section>
+  <div class="gazette-page">
+    <div class="masthead-strip">
+      <div class="masthead-left">Volume MMXXVI - No. 121</div>
+      <div class="masthead-title">The Developer Gazette</div>
+      <div class="masthead-right">
+        <span id="todayDate"></span>
+        <span class="edition">Late Edition</span>
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="np-footer">
-      <div class="np-footer-inner">
-        <div class="np-footer-left">
-          <strong id="footerHeadline"></strong>
-          <span id="footerLocation"></span>
+    <header class="hero-header">
+      <h1 class="hero-name" data-name></h1>
+      <div id="headlineRoles" class="hero-roles"></div>
+    </header>
+
+    <main class="content-grid">
+      <section class="col-left">
+        <article>
+          <img id="profileImage" class="profile-image" alt="Profile" />
+          <h2 class="section-headline">A Vision for Scalable Architecture</h2>
+          <p id="summaryText" class="dropcap summary-text"></p>
+          <div class="quick-links">
+            <a id="emailLink" target="_blank" rel="noopener">Contact via Email</a>
+            <a id="githubLink" target="_blank" rel="noopener">GitHub Profile</a>
+            <a id="linkedinLink" target="_blank" rel="noopener">LinkedIn Network</a>
+          </div>
+        </article>
+
+        <article class="boxed-block">
+          <h3 class="mini-title">Skills Lexicon</h3>
+          <div id="skillsLexicon" class="lexicon"></div>
+        </article>
+      </section>
+
+      <section class="col-center">
+        <div class="section-banner">
+          <h2>Career Milestones</h2>
+          <span>Section A1</span>
         </div>
-        <div class="np-footer-links">
-          <a id="footerGithub" target="_blank" rel="noopener">GitHub</a>
-          <a id="footerLinkedin" target="_blank" rel="noopener">LinkedIn</a>
-          <a id="footerEmail" target="_blank" rel="noopener">Email</a>
+        <div id="experienceList" class="experience-list"></div>
+
+        <div class="focus-block">
+          <h3>Technological Focus Areas</h3>
+          <div id="focusAreas" class="focus-grid"></div>
         </div>
+      </section>
+
+      <section class="col-right">
+        <div class="section-banner">
+          <h2>On The Wire</h2>
+        </div>
+        <div id="projectsList" class="projects-list"></div>
+
+        <div class="boxed-block education-block">
+          <h3 class="mini-title">Editorial: Education</h3>
+          <p id="educationText"></p>
+        </div>
+
+        <div class="language-block">
+          <div class="language-title">Language Edition</div>
+          <div id="languagesList" class="languages-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-brand">
+        <h2>The Gazette</h2>
+        <p id="footerCopy"></p>
       </div>
+      <nav class="footer-nav">
+        <a href="#">Archives</a>
+        <a href="#">Contact</a>
+        <a href="#">Tech Stack</a>
+        <a id="resumeLink" href="#" target="_blank" rel="noopener">Resume PDF</a>
+      </nav>
+      <div class="footer-legal" id="footerLegal"></div>
     </footer>
   </div>
 

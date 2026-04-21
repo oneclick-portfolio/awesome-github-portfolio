@@ -5,6 +5,7 @@
  *   getSection(resume, name)       – return resume.sections[name] or null
  *   getItems(resume, sectionName)  – return visible items of a section
  *   getLink(website)               – return URL string or '' from a website object
+ *   getPictureDimensions(resume)   – normalized width/height/aspectRatio
  */
 (function () {
   'use strict';
@@ -72,12 +73,70 @@
   }
 
   /**
+   * Parse a positive numeric value.
+   * @param {unknown} value
+   * @param {number} fallback
+   * @returns {number}
+   */
+  function toPositiveNumber(value, fallback) {
+    var num = Number(value);
+    return Number.isFinite(num) && num > 0 ? num : fallback;
+  }
+
+  /**
+   * Get normalized picture dimensions from metadata.
+   * Falls back to `size` and a square aspect ratio when explicit dimensions are missing.
+   * @param {Object} resume
+   * @returns {{width: number, height: number, aspectRatio: number}}
+   */
+  function getPictureDimensions(resume) {
+    var picture = (resume && resume.picture) || {};
+    var size = toPositiveNumber(picture.size, 200);
+    var rawWidth = toPositiveNumber(picture.width, 0);
+    var rawHeight = toPositiveNumber(picture.height, 0);
+    var aspectFromMeta = toPositiveNumber(picture.aspectRatio, 0);
+    var aspectRatio = aspectFromMeta;
+
+    if (!aspectRatio && rawWidth && rawHeight) {
+      aspectRatio = rawWidth / rawHeight;
+    }
+    if (!aspectRatio) {
+      aspectRatio = 1;
+    }
+
+    var width = rawWidth || size;
+    var height = rawHeight || (width / aspectRatio);
+
+    return {
+      width: width,
+      height: height,
+      aspectRatio: aspectRatio,
+    };
+  }
+
+  /**
    * Get the profile picture metadata (size, border radius, etc.).
    * @param {Object} resume
    * @returns {Object}  Picture metadata object or empty object
    */
   function getPictureMetadata(resume) {
-    return (resume && resume.picture) || {};
+    var picture = (resume && resume.picture) || {};
+    var dimensions = getPictureDimensions(resume);
+
+    return {
+      hidden: Boolean(picture.hidden),
+      url: picture.url || '',
+      size: dimensions.width,
+      width: dimensions.width,
+      height: dimensions.height,
+      aspectRatio: dimensions.aspectRatio,
+      rotation: Number(picture.rotation) || 0,
+      borderRadius: Number.isFinite(Number(picture.borderRadius)) ? Number(picture.borderRadius) : 0,
+      borderColor: picture.borderColor || 'rgba(0, 0, 0, 0)',
+      borderWidth: Number.isFinite(Number(picture.borderWidth)) ? Number(picture.borderWidth) : 0,
+      shadowColor: picture.shadowColor || 'rgba(0, 0, 0, 0.5)',
+      shadowWidth: Number.isFinite(Number(picture.shadowWidth)) ? Number(picture.shadowWidth) : 0,
+    };
   }
 
   /**
@@ -104,6 +163,7 @@
     getItems: getItems,
     getLink: getLink,
     getPictureUrl: getPictureUrl,
+    getPictureDimensions: getPictureDimensions,
     getPictureMetadata: getPictureMetadata,
     getBasics: getBasics,
     getSummary: getSummary,

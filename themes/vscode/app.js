@@ -307,10 +307,14 @@ async function loadProfileArt() {
     const pictureUrl = window.RxResumeData.getPictureUrl(resume);
 
     if (pictureUrl) {
-      // Create container with aspect ratio
+      const hostStyle = window.getComputedStyle(profileArtVsc);
+      const hasClipShape = hostStyle.clipPath && hostStyle.clipPath !== 'none';
+      const pictureWidth = profileArtVsc.clientWidth || pictureMeta.width || pictureMeta.size || 200;
+      const pictureHeight = profileArtVsc.clientHeight || pictureMeta.height || (pictureWidth / (pictureMeta.aspectRatio || 1));
+
       const container = document.createElement('div');
-      container.style.width = (pictureMeta.size || 200) + 'px';
-      container.style.aspectRatio = (pictureMeta.aspectRatio || 1);
+      container.style.width = pictureWidth + 'px';
+      container.style.height = pictureHeight + 'px';
       container.style.overflow = 'hidden';
       container.style.position = 'relative';
       
@@ -321,8 +325,8 @@ async function loadProfileArt() {
         container.style.borderStyle = 'solid';
       }
       
-      // Apply border radius
-      if (pictureMeta.borderRadius !== undefined) {
+      // Skip radius inside clip-path hosts to avoid visible background corners.
+      if (!hasClipShape && pictureMeta.borderRadius !== undefined) {
         container.style.borderRadius = (pictureMeta.borderRadius * 4 / 3) + 'px';
       }
       
