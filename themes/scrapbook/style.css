@@ -1,0 +1,293 @@
+/* Tailwind config via style tag */
+@import url('https://cdn.tailwindcss.com?plugins=forms,container-queries');
+
+:root {
+  --bg-texture: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+}
+
+/* Custom Tailwind Colors */
+:root {
+  --color-paper-white: #fcfcfc;
+  --color-crayon-red: #ff4d4d;
+  --color-crayon-blue: #4d94ff;
+  --color-crayon-yellow: #ffcc00;
+  --color-crayon-green: #47d147;
+  --color-construction-orange: #ff8533;
+  --color-marker-black: #2d2d2d;
+}
+
+body {
+  background-color: #f0f0f0;
+  background-image: var(--bg-texture);
+  font-family: 'Schoolbell', cursive;
+  color: #2d2d2d;
+}
+
+.drawing-sheet {
+  background-color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Scrapbook styling */
+.cut-out {
+  filter: drop-shadow(4px 4px 0px rgba(0, 0, 0, 0.15));
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.cut-out:hover {
+  transform: scale(1.02) !important;
+  z-index: 50;
+  filter: drop-shadow(6px 6px 2px rgba(0, 0, 0, 0.2));
+}
+
+.glue-blob {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+/* Zig-zag edges for decorative elements */
+.zig-zag-edge {
+  clip-path: polygon(
+    0% 0%, 5% 5%, 10% 0%, 15% 5%, 20% 0%, 25% 5%, 30% 0%, 35% 5%, 40% 0%, 45% 5%, 50% 0%, 55% 5%, 60% 0%, 65% 5%, 70% 0%, 75% 5%, 80% 0%, 85% 5%, 90% 0%, 95% 5%, 100% 0%,
+    100% 100%, 95% 95%, 90% 100%, 85% 95%, 80% 100%, 75% 95%, 70% 100%, 65% 95%, 60% 100%, 55% 95%, 50% 100%, 45% 95%, 40% 100%, 35% 95%, 30% 100%, 25% 95%, 20% 100%, 15% 95%, 10% 100%, 5% 95%, 0% 100%
+  );
+}
+
+/* Notebook lines effect */
+.notebook-lines {
+  background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
+  background-size: 100% 1.5rem;
+}
+
+/* Custom fonts */
+.font-chunky {
+  font-family: 'Fredoka One', cursive;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+.font-handwritten {
+  font-family: 'Gochi Hand', cursive;
+  font-weight: 400;
+}
+
+.font-marker {
+  font-family: 'Permanent Marker', cursive;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.font-school {
+  font-family: 'Schoolbell', cursive;
+  font-weight: 400;
+}
+
+/* Color definitions */
+.bg-paper-white {
+  background-color: #fcfcfc;
+}
+
+.bg-crayon-red {
+  background-color: #ff4d4d;
+}
+
+.bg-crayon-blue {
+  background-color: #4d94ff;
+}
+
+.bg-crayon-yellow {
+  background-color: #ffcc00;
+}
+
+.bg-crayon-green {
+  background-color: #47d147;
+}
+
+.bg-construction-orange {
+  background-color: #ff8533;
+}
+
+.bg-marker-black {
+  background-color: #2d2d2d;
+}
+
+.text-crayon-red {
+  color: #ff4d4d;
+}
+
+.text-crayon-blue {
+  color: #4d94ff;
+}
+
+.text-crayon-yellow {
+  color: #ffcc00;
+}
+
+.text-crayon-green {
+  color: #47d147;
+}
+
+.text-construction-orange {
+  color: #ff8533;
+}
+
+.text-marker-black {
+  color: #2d2d2d;
+}
+
+.text-paper-white {
+  color: #fcfcfc;
+}
+
+.border-crayon-red {
+  border-color: #ff4d4d;
+}
+
+.border-crayon-blue {
+  border-color: #4d94ff;
+}
+
+.border-crayon-yellow {
+  border-color: #ffcc00;
+}
+
+.border-crayon-green {
+  border-color: #47d147;
+}
+
+.border-construction-orange {
+  border-color: #ff8533;
+}
+
+.border-marker-black {
+  border-color: #2d2d2d;
+}
+
+.border-paper-white {
+  border-color: #fcfcfc;
+}
+
+.selection\:bg-crayon-yellow ::selection {
+  background-color: #ffcc00;
+  color: #2d2d2d;
+}
+
+/* Animations */
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce-slow 2s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .drawing-sheet {
+    margin: 4px;
+    padding: 1rem;
+    border-width: 8px;
+  }
+
+  .font-chunky {
+    letter-spacing: 0.02em;
+  }
+
+  .cut-out:hover {
+    transform: scale(1.01) !important;
+  }
+
+  /* Stack buttons better on mobile */
+  .flex.gap-4.flex-wrap {
+    gap: 0.5rem;
+  }
+
+  /* Better button sizing on mobile */
+  .cut-out.bg-construction-orange {
+    padding: 0.75rem 0.75rem;
+  }
+}
+
+/* Print styles for portfolio printing */
+@media print {
+  body {
+    background: white;
+  }
+
+  .drawing-sheet {
+    box-shadow: none;
+    margin: 0;
+    border: none;
+    min-height: auto;
+  }
+
+  .cut-out {
+    filter: none;
+    page-break-inside: avoid;
+  }
+}
+
+/* Links styling */
+a {
+  transition: all 0.2s ease;
+}
+
+a:not([class*="cut-out"]):not([class*="btn"]) {
+  color: #4d94ff;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+a:not([class*="cut-out"]):not([class*="btn"]):hover {
+  color: #ff8533;
+}
+
+/* Form styling */
+input, textarea {
+  font-family: 'Schoolbell', cursive;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  ring: 4px solid #ffcc00;
+}
+
+/* Container for better spacing */
+@media (min-width: 768px) {
+  .max-w-6xl {
+    max-width: 66rem;
+  }
+}
+
+/* Ensure proper spacing between sections */
+section {
+  scroll-behavior: smooth;
+  scroll-margin-top: 2rem;
+}
+
+/* Material symbols icon sizing */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+}
+
+/* Accessibility: reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cut-out,
+  .animate-bounce,
+  button,
+  a {
+    animation: none !important;
+    transition: none !important;
+  }
+}

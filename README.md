@@ -60,7 +60,7 @@ Shared helpers in `src/rxresume.js` normalize resume data access, including prof
 ### Recommended: serve from the repo root
 
 ```bash
-python3 -m http.server 8080
+python3 -m http.server 9090
 ```
 
 This is the most reliable option because theme pages reference shared files such as `../../config.js` and `../../src/rxresume.js`.

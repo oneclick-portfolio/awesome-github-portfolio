@@ -1,6 +1,10 @@
 let resume = null;
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+const commandPalette = $('#commandPalette');
+const commandInput = $('#commandInput');
+const terminalBody = $('#terminalBody');
+const statusLine = $('#statusLine');
 
 /* Helpers */
 function esc(str) {
@@ -25,6 +29,7 @@ async function loadResumeData() {
 
     renderAllPanels();
     loadProfileArt();
+    attachEditorInteractions();
   } catch (error) {
     console.error('Error loading resume data:', error);
     $('#panel-about_me').innerHTML = '<div style="padding:2rem;color:#f38ba8;">Error loading resume data. Check resume/Reactive Resume.json.</div>';
@@ -44,7 +49,6 @@ function renderAllPanels() {
 
 function renderAboutMe() {
   const b = resume.basics;
-  const pictureUrl = window.RxResumeData.getPictureUrl(resume);
   const summary = stripHtml(resume.summary?.content || '').trim();
   const summaryLines = wrapText(summary, 60);
 
@@ -64,20 +68,10 @@ function renderAboutMe() {
   html += line(n++, `    arin := <span class="syn-type">Developer</span>{`);
   html += line(n++, `        Name:     <span class="syn-str">"${esc(b.name)}"</span>,`);
   html += line(n++, `        Role:     <span class="syn-str">"${esc(b.headline || '')}"</span>,`);
-  html += line(n++, `        PhotoURL: <span class="syn-str">"${esc(pictureUrl || '')}"</span>,`);
+  html += line(n++, `        PhotoURL: <span class="syn-str">"preview/panel-right"</span>,`);
   html += line(n++, `    }`);
   html += line(n++, `    fmt.<span class="syn-func">Println</span>(arin)`);
   html += line(n++, `}`);
-  html += line(n++, '');
-
-  // Profile art in comment block
-  html += line(n++, `<span class="syn-comment">/**</span>`);
-  html += `<div class="vsc-profile-embed" id="profileArtVsc"></div>`;
-  const commentLines = 6;
-  for (let i = 0; i < commentLines; i++) {
-    html += line(n++, `<span class="syn-comment">//</span>`);
-  }
-  html += line(n++, `<span class="syn-comment">*/</span>`);
   html += line(n++, '');
 
   // Summary as comment block
@@ -277,7 +271,9 @@ function switchTab(tabId) {
   if (info) {
     $('#breadcrumbFile').textContent = info.name;
     $('#statusLang').textContent = info.lang;
+    if (statusLine) statusLine.textContent = 'Ln 1, Col 1';
   }
+  attachEditorInteractions();
 }
 
 // Tab click
@@ -290,16 +286,116 @@ $$('.vsc-tree-item').forEach(item => {
   item.addEventListener('click', () => switchTab(item.dataset.tab));
 });
 
+/* Activity bar switching */
+$$('.vsc-activity-icon[data-panel]').forEach(icon => {
+  icon.addEventListener('click', () => {
+    const panel = icon.dataset.panel;
+    if (!panel) return;
+
+    $$('.vsc-activity-icon[data-panel]').forEach(a => a.classList.toggle('active', a === icon));
+    $$('.vsc-sidebar-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === panel));
+  });
+});
+
+/* Command palette */
+function setCommandPalette(open) {
+  if (!commandPalette) return;
+  commandPalette.classList.toggle('open', open);
+  commandPalette.setAttribute('aria-hidden', open ? 'false' : 'true');
+  if (open && commandInput) commandInput.focus();
+}
+
+document.addEventListener('keydown', (event) => {
+  const isCmdPalette = (event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'p';
+  if (isCmdPalette) {
+    event.preventDefault();
+    setCommandPalette(true);
+  }
+  if (event.key === 'Escape') {
+    setCommandPalette(false);
+  }
+});
+
+if (commandPalette) {
+  commandPalette.addEventListener('click', (event) => {
+    if (event.target === commandPalette) setCommandPalette(false);
+  });
+}
+
+$$('.vsc-command-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const tab = item.dataset.tab;
+    if (tab) switchTab(tab);
+    setCommandPalette(false);
+  });
+});
+
+/* Editor-like line/column behavior */
+function attachEditorInteractions() {
+  $$('.vsc-panel.active .vsc-line').forEach((row, index) => {
+    if (row.dataset.bound === 'true') return;
+    row.dataset.bound = 'true';
+    row.addEventListener('mouseenter', () => {
+      if (statusLine) statusLine.textContent = `Ln ${index + 1}, Col 1`;
+    });
+    row.addEventListener('click', () => {
+      $$('.vsc-line.current').forEach(lineEl => lineEl.classList.remove('current'));
+      row.classList.add('current');
+      if (statusLine) statusLine.textContent = `Ln ${index + 1}, Col 1`;
+    });
+  });
+}
+
+/* Terminal animation */
+const termSnippets = [
+  '$ npm run lint',
+  '✓ themes/vscode/style.css',
+  '$ npm run build',
+  'Build completed in 384ms',
+  '$ git status',
+  'modified: themes/vscode/index.html'
+];
+
+function appendTerminalLine(text, className = '') {
+  if (!terminalBody) return;
+  const line = document.createElement('div');
+  line.className = className ? `vsc-term-line ${className}` : 'vsc-term-line';
+  line.textContent = text;
+  terminalBody.appendChild(line);
+  terminalBody.scrollTop = terminalBody.scrollHeight;
+}
+
+function runTerminalTicker() {
+  let idx = 0;
+  setInterval(() => {
+    const value = termSnippets[idx % termSnippets.length];
+    const kind = value.startsWith('$') ? 'vsc-term-cmdline' : 'vsc-term-output';
+    appendTerminalLine(value, kind);
+    idx += 1;
+  }, 3200);
+}
+
+function initTitle() {
+  const el = $('[data-name]');
+  if (el) el.textContent = 'awesome-github-portfolio - Visual Studio Code';
+}
+
 /* Load Profile Art */
 async function loadProfileArt() {
   const profileArtVsc = $('#profileArtVsc');
   if (!profileArtVsc || !resume) return;
 
+  const basics = resume.basics || {};
+  const nameEl = $('#profileName');
+  const roleEl = $('#profileRole');
+  if (nameEl) nameEl.textContent = basics.name || 'Developer';
+  if (roleEl) roleEl.textContent = basics.headline || 'Building beautiful interfaces';
+
   const pictureMeta = window.RxResumeData.getPictureMetadata(resume);
   
   // Check if picture is hidden
   if (pictureMeta.hidden) {
-    profileArtVsc.innerHTML = '';
+    profileArtVsc.innerHTML = '<div class="vsc-term-output">Photo hidden</div>';
     return;
   }
 
@@ -367,4 +463,6 @@ async function loadProfileArt() {
 }
 
 /* Init */
+initTitle();
 loadResumeData();
+runTerminalTicker();

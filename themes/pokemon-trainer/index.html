@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#cc0000" />
+  <title>Portfolio</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body class="pokemon-theme">
+  <!-- Pokédex top bar -->
+  <header class="pokedex-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="pokeball-logo" aria-hidden="true">
+          <div class="pb-top"></div>
+          <div class="pb-band"><div class="pb-btn"></div></div>
+          <div class="pb-bottom"></div>
+        </div>
+        <span class="header-title pixel" data-name></span>
+      </div>
+      <nav class="header-nav">
+        <a href="#experience" class="nav-btn">EXP</a>
+        <a href="#projects" class="nav-btn">ITEMS</a>
+        <a href="#skills" class="nav-btn">MOVES</a>
+        <a id="emailLink" class="nav-btn nav-btn--primary" target="_blank" rel="noopener">CONTACT</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="theme-shell">
+    <!-- Trainer Card Hero -->
+    <section class="trainer-card-section">
+      <div class="trainer-card">
+        <div class="trainer-card__badge pixel">TRAINER CARD</div>
+        <div class="trainer-card__body">
+          <div class="trainer-card__info">
+            <div class="tc-row">
+              <span class="tc-label pixel">NAME</span>
+              <span class="tc-value pixel" data-name></span>
+            </div>
+            <div class="tc-row">
+              <span class="tc-label pixel">CLASS</span>
+              <span class="tc-value pixel" data-headline></span>
+            </div>
+            <div class="tc-row tc-row--summary">
+              <p class="tc-summary" id="summaryText"></p>
+            </div>
+            <div class="tc-links">
+              <a id="githubLink" class="poke-btn" target="_blank" rel="noopener">
+                <span class="pixel">GitHub</span>
+              </a>
+              <a id="linkedinLink" class="poke-btn" target="_blank" rel="noopener">
+                <span class="pixel">LinkedIn</span>
+              </a>
+            </div>
+          </div>
+          <div class="trainer-card__portrait">
+            <div class="portrait-frame" id="profileArt">
+              <div class="portrait-placeholder pixel">??</div>
+            </div>
+            <div class="trainer-hud">
+              <div class="hud-line"><span class="pixel">HP</span><span class="hud-bar"><i></i></span></div>
+              <div class="hud-line"><span class="pixel">ATK</span><span class="hud-bar"><i></i></span></div>
+              <div class="hud-line"><span class="pixel">SPD</span><span class="hud-bar"><i></i></span></div>
+            </div>
+            <div class="trainer-id pixel">ID: 001</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience = Battle Record -->
+    <section id="experience" class="poke-section">
+      <div class="container">
+        <h2 class="section-title pixel">BATTLE RECORD</h2>
+        <div id="experienceList" class="battle-list"></div>
+      </div>
+    </section>
+
+    <!-- Projects = Item Bag -->
+    <section id="projects" class="poke-section poke-section--alt">
+      <div class="container">
+        <h2 class="section-title pixel">ITEM BAG</h2>
+        <div id="projectsGrid" class="item-grid"></div>
+      </div>
+    </section>
+
+    <!-- Education -->
+    <section id="education" class="poke-section">
+      <div class="container">
+        <h2 class="section-title pixel">POKEDEX ENTRIES</h2>
+        <div id="educationList" class="dex-list"></div>
+      </div>
+    </section>
+
+    <!-- Skills = Moves -->
+    <section id="skills" class="poke-section poke-section--alt">
+      <div class="container">
+        <h2 class="section-title pixel">MOVE SET</h2>
+        <div class="skills-board">
+          <section class="badge-vault">
+            <h3 class="badge-title pixel">GYM BADGES</h3>
+            <div id="badgesGrid" class="badges-grid"></div>
+          </section>
+          <section class="moves-vault">
+            <h3 class="badge-title pixel">SKILLS (HP)</h3>
+            <div id="skillsCloud" class="moves-grid"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- Languages -->
+    <section id="languages" class="poke-section">
+      <div class="container">
+        <h2 class="section-title pixel">LANGUAGES</h2>
+        <div id="languagesList" class="lang-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="poke-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="pixel footer-name" id="footerHeadline"></span>
+        <span class="footer-loc" id="footerLocation"></span>
+      </div>
+      <div class="footer-links">
+        <a id="footerGithub" target="_blank" rel="noopener">GitHub</a>
+        <a id="footerLinkedin" target="_blank" rel="noopener">LinkedIn</a>
+        <a id="footerEmail" target="_blank" rel="noopener">Email</a>
+        <a href="/index.html">Themes</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../config.js"></script>
+  <script src="../../src/rxresume.js"></script>
+  <script src="./app.js" type="module"></script>
+</body>
+</html>

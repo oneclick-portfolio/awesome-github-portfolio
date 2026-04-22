@@ -48,36 +48,57 @@
         <div class="vsc-activity-icon" title="Extensions">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         </div>
-        <div class="vsc-activity-bottom">
-          <a href="/index.html" class="vsc-activity-icon" title="Theme Picker">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
-          </a>
-        </div>
       </div>
 
       <!-- Sidebar / Explorer -->
       <div class="vsc-sidebar" id="sidebar">
-        <div class="vsc-sidebar-header">EXPLORER</div>
-        <div class="vsc-sidebar-section">
-          <div class="vsc-tree-header">
-            <span class="vsc-tree-arrow">▾</span> src
+        <div class="vsc-sidebar-panel active" data-panel="explorer">
+          <div class="vsc-sidebar-header">EXPLORER</div>
+          <div class="vsc-sidebar-section">
+            <div class="vsc-tree-header">
+              <span class="vsc-tree-arrow">▾</span> src
+            </div>
+            <div class="vsc-tree-items">
+              <div class="vsc-tree-item active" data-tab="about_me">
+                <span class="vsc-file-icon go">⛓</span> about_me.go
+              </div>
+              <div class="vsc-tree-item" data-tab="experience">
+                <span class="vsc-file-icon yml">!</span> experience.yml
+              </div>
+              <div class="vsc-tree-item" data-tab="projects">
+                <span class="vsc-file-icon json">{}</span> projects.json
+              </div>
+              <div class="vsc-tree-item" data-tab="skills">
+                <span class="vsc-file-icon toml">⛭</span> skills.toml
+              </div>
+              <div class="vsc-tree-item" data-tab="contact">
+                <span class="vsc-file-icon md">♦</span> contact.md
+              </div>
+            </div>
           </div>
-          <div class="vsc-tree-items">
-            <div class="vsc-tree-item active" data-tab="about_me">
-              <span class="vsc-file-icon go">⛓</span> about_me.go
+        </div>
+
+        <div class="vsc-sidebar-panel" data-panel="search">
+          <div class="vsc-sidebar-header">SEARCH</div>
+          <div class="vsc-sidebar-section vsc-search-wrap">
+            <input class="vsc-search-input" aria-label="Search in files" value="portfolio" />
+            <div class="vsc-search-results">
+              <div class="vsc-search-file">about_me.go <span>2 results</span></div>
+              <div class="vsc-search-hit">Name: "Arindam"</div>
+              <div class="vsc-search-hit">Role: "Frontend Developer"</div>
+              <div class="vsc-search-file">projects.json <span>1 result</span></div>
+              <div class="vsc-search-hit">"name": "Awesome GitHub Portfolio"</div>
             </div>
-            <div class="vsc-tree-item" data-tab="experience">
-              <span class="vsc-file-icon yml">!</span> experience.yml
-            </div>
-            <div class="vsc-tree-item" data-tab="projects">
-              <span class="vsc-file-icon json">{}</span> projects.json
-            </div>
-            <div class="vsc-tree-item" data-tab="skills">
-              <span class="vsc-file-icon toml">⛭</span> skills.toml
-            </div>
-            <div class="vsc-tree-item" data-tab="contact">
-              <span class="vsc-file-icon md">♦</span> contact.md
-            </div>
+          </div>
+        </div>
+
+        <div class="vsc-sidebar-panel" data-panel="git">
+          <div class="vsc-sidebar-header">SOURCE CONTROL</div>
+          <div class="vsc-sidebar-section">
+            <div class="vsc-git-summary">1 pending change</div>
+            <div class="vsc-git-item"><span class="vsc-git-status modified">M</span> themes/vscode/style.css</div>
+            <div class="vsc-git-item"><span class="vsc-git-status added">A</span> themes/vscode/app.js</div>
+            <button class="vsc-git-commit" type="button">Commit</button>
           </div>
         </div>
       </div>
@@ -110,6 +131,28 @@
 
         <!-- Editor Panels -->
         <div class="vsc-editor-content">
+          <aside class="vsc-profile-dock" aria-label="Profile preview">
+            <div class="vsc-dock-header">PREVIEW</div>
+            <div class="vsc-dock-card">
+              <div class="vsc-dock-photo" id="profileArtVsc"></div>
+              <div class="vsc-dock-meta">
+                <div class="vsc-dock-name" id="profileName">Developer</div>
+                <div class="vsc-dock-role" id="profileRole">Building beautiful interfaces</div>
+              </div>
+            </div>
+          </aside>
+          <div class="vsc-minimap" aria-hidden="true">
+            <div class="vsc-minimap-line w8"></div>
+            <div class="vsc-minimap-line w6"></div>
+            <div class="vsc-minimap-line w9"></div>
+            <div class="vsc-minimap-line w7"></div>
+            <div class="vsc-minimap-line w5"></div>
+            <div class="vsc-minimap-line w10"></div>
+            <div class="vsc-minimap-line w8"></div>
+            <div class="vsc-minimap-line w6"></div>
+            <div class="vsc-minimap-line w9"></div>
+            <div class="vsc-minimap-line w4"></div>
+          </div>
           <!-- about_me.go -->
           <div class="vsc-panel active" id="panel-about_me"></div>
           <!-- experience.yml -->
@@ -156,6 +199,20 @@
         <span class="vsc-status-item">CRLF</span>
         <span class="vsc-status-item" id="statusLang">Go</span>
         <span class="vsc-status-item vsc-status-theme">Dracula</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="vsc-command-palette" id="commandPalette" aria-hidden="true">
+    <div class="vsc-command-dialog">
+      <div class="vsc-command-bar">
+        <span class="vsc-command-prefix">></span>
+        <input id="commandInput" type="text" value="Open File" aria-label="Command palette" />
+      </div>
+      <div class="vsc-command-list">
+        <button class="vsc-command-item" type="button" data-tab="about_me">Go to File: about_me.go</button>
+        <button class="vsc-command-item" type="button" data-tab="projects">Go to File: projects.json</button>
+        <button class="vsc-command-item" type="button" data-tab="contact">Open Contact Markdown Preview</button>
       </div>
     </div>
   </div>

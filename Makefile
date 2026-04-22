@@ -1,4 +1,4 @@
-PORT ?= 8080
+PORT ?= 9090
 
 .PHONY: help dev screenshot-themes
 

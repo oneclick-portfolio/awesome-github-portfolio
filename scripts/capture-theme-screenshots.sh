@@ -6,7 +6,12 @@ set -euo pipefail
 
 PORT="${1:-8090}"
 BASE_URL="http://127.0.0.1:${PORT}"
-THEMES=(fun-graphic graphic modern newspaper vscode)
+
+# Dynamically get all theme directories
+THEMES=()
+for theme_dir in themes/*/; do
+  THEMES+=("$(basename "$theme_dir")")
+done
 
 SERVER_PID=""
 
