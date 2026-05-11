@@ -13,7 +13,7 @@
   },
   "basics": {
     "name": "Arindam Kumar Nath",
-    "headline": "Software Developer",
+    "headline": "Senior Software Engineer",
     "email": "imarinzone@gmail.com",
     "phone": "",
     "location": "Bengaluru, India",
@@ -38,7 +38,11 @@
         {
           "id": "m85ekips1prjpn08lcobe7kw",
           "hidden": false,
-          "icon": "linkedin",
+          "options": {
+            "showLinkInTitle": false
+          },
+          "icon": "linkedin-logo",
+          "iconColor": "rgba(0, 132, 209, 1)",
           "network": "Linkedin",
           "username": "linkedin/in/imarinzone",
           "website": {
@@ -49,11 +53,30 @@
         {
           "id": "eq3ffh2cfx7zsqj0b3tx78r7",
           "hidden": false,
-          "icon": "github",
+          "options": {
+            "showLinkInTitle": false
+          },
+          "icon": "github-logo",
+          "iconColor": "rgba(0, 166, 62, 1)",
           "network": "github",
           "username": "github.com/imarinzone",
           "website": {
             "url": "https://github.com/imarinzone",
+            "label": ""
+          }
+        },
+        {
+          "id": "019dd846-8d13-73ff-b538-1b556e98767d",
+          "hidden": false,
+          "options": {
+            "showLinkInTitle": false
+          },
+          "icon": "file-pdf",
+          "iconColor": "",
+          "network": "resume",
+          "username": "",
+          "website": {
+            "url": "https://rxresu.me/imarinzone/resume",
             "label": ""
           }
         }
@@ -64,6 +87,23 @@
       "columns": 1,
       "hidden": false,
       "items": [
+        {
+          "id": "019dd847-6a58-7354-b3c3-fec723b5c77a",
+          "hidden": false,
+          "options": {
+            "showLinkInTitle": false
+          },
+          "company": "Walmart",
+          "position": "Senior Software Engineer",
+          "location": "Bengaluru",
+          "period": "April 2026 - Present",
+          "website": {
+            "url": "https://tech.walmart.com",
+            "label": ""
+          },
+          "description": "<ul><li><p>Manage policy manager which creates and manages tech campaigns across the originization using <strong>helm</strong> files.</p></li><li><p>Created a <strong>TCP proxy</strong> tunneling service using 3proxy for managing all outgoing calls from staging and production environment across the team.</p></li></ul><p></p>",
+          "roles": []
+        },
         {
           "id": "hccjgansoxbqoezw58igm8ka",
           "hidden": false,
@@ -329,40 +369,238 @@
       "title": "Interests",
       "columns": 1,
       "hidden": false,
-      "items": []
+      "items": [
+        {
+          "id": "int-001",
+          "hidden": false,
+          "name": "Cloud Architecture",
+          "keywords": ["Kubernetes", "Microservices", "Distributed Systems"]
+        },
+        {
+          "id": "int-002",
+          "hidden": false,
+          "name": "Open Source Development",
+          "keywords": ["Go", "Python", "Contributing"]
+        },
+        {
+          "id": "int-003",
+          "hidden": false,
+          "name": "System Performance Optimization",
+          "keywords": ["Benchmarking", "Profiling", "Scaling"]
+        }
+      ]
     },
     "awards": {
       "title": "Awards",
       "columns": 1,
       "hidden": false,
-      "items": []
+      "items": [
+        {
+          "id": "aw-001",
+          "hidden": false,
+          "title": "Employee of the Month",
+          "awarder": "UST Global",
+          "date": "2024-06",
+          "description": "Recognized for exceptional contribution to Walmart's testing framework implementation and reducing P0 issues by 45%.",
+          "website": {
+            "url": "",
+            "label": ""
+          }
+        },
+        {
+          "id": "aw-002",
+          "hidden": false,
+          "title": "Innovation Award",
+          "awarder": "BYJU'S",
+          "date": "2023-03",
+          "description": "Awarded for designing the centralized tuition database that improved admin productivity by 60%.",
+          "website": {
+            "url": "",
+            "label": ""
+          }
+        }
+      ]
     },
     "certifications": {
       "title": "Certifications",
       "columns": 1,
       "hidden": false,
-      "items": []
+      "items": [
+        {
+          "id": "cert-001",
+          "hidden": false,
+          "name": "AWS Certified Solutions Architect – Professional",
+          "issuer": "Amazon Web Services",
+          "date": "2023-12",
+          "description": "Advanced cloud architecture design and implementation on AWS",
+          "website": {
+            "url": "https://aws.amazon.com/certification/",
+            "label": "Verify"
+          }
+        },
+        {
+          "id": "cert-002",
+          "hidden": false,
+          "name": "Kubernetes Application Developer (CKAD)",
+          "issuer": "Cloud Native Computing Foundation",
+          "date": "2023-06",
+          "description": "Certified Kubernetes Application Developer",
+          "website": {
+            "url": "https://www.cncf.io/certification/ckad/",
+            "label": "Verify"
+          }
+        },
+        {
+          "id": "cert-003",
+          "hidden": false,
+          "name": "Go for DevOps",
+          "issuer": "Linux Academy",
+          "date": "2022-08",
+          "description": "Advanced Go programming for DevOps and infrastructure",
+          "website": {
+            "url": "",
+            "label": ""
+          }
+        }
+      ]
     },
     "publications": {
       "title": "Publications",
       "columns": 1,
       "hidden": false,
-      "items": []
+      "items": [
+        {
+          "id": "pub-001",
+          "hidden": false,
+          "name": "Building Scalable Microservices with Go and Kubernetes",
+          "publisher": "Dev.to",
+          "date": "2024-02",
+          "website": {
+            "url": "https://dev.to",
+            "label": "Read Article"
+          },
+          "description": "A comprehensive guide on designing production-ready microservices using Go, gRPC, and Kubernetes orchestration."
+        },
+        {
+          "id": "pub-002",
+          "hidden": false,
+          "name": "Cloud Migration Best Practices: From GCP to Tencent Cloud",
+          "publisher": "Medium",
+          "date": "2024-01",
+          "website": {
+            "url": "https://medium.com",
+            "label": "Read Article"
+          },
+          "description": "Lessons learned from large-scale cloud migration projects and automation strategies."
+        }
+      ]
     },
     "volunteer": {
       "title": "Volunteering",
       "columns": 1,
       "hidden": false,
-      "items": []
+      "items": [
+        {
+          "id": "vol-001",
+          "hidden": false,
+          "organization": "Open Source Initiative",
+          "position": "Go Community Contributor",
+          "location": "Remote",
+          "period": "2023 – Present",
+          "website": {
+            "url": "https://opensource.org",
+            "label": "opensource"
+          },
+          "description": "<p>Contributing to Go ecosystem projects including <strong>gRPC</strong>, <strong>Kubernetes</strong>, and related microservices frameworks.</p><ul><li>Code reviews and feature implementations</li><li>Documentation improvements</li></ul>"
+        },
+        {
+          "id": "vol-002",
+          "hidden": false,
+          "organization": "Tech for Social Good",
+          "position": "Mentor",
+          "location": "Bengaluru",
+          "period": "2022 – Present",
+          "website": {
+            "url": "",
+            "label": ""
+          },
+          "description": "<p>Mentoring junior developers on backend development, system design, and cloud technologies.</p>"
+        }
+      ]
     },
     "references": {
       "title": "References",
       "columns": 1,
       "hidden": false,
-      "items": []
+      "items": [
+        {
+          "id": "ref-001",
+          "hidden": false,
+          "name": "Rajesh Kumar",
+          "description": "Tech Lead at Byjus",
+          "phone": "",
+          "email": "rajesh.kumar@ustglobal.com",
+          "website": {
+            "url": "https://linkedin.com/in/rajesh-kumar",
+            "label": "LinkedIn"
+          }
+        },
+        {
+          "id": "ref-002",
+          "hidden": false,
+          "name": "Priya Sharma",
+          "description": "Senior Engineering Manager at Coffeebeans.io",
+          "phone": "",
+          "email": "priya@coffeebeans.io",
+          "website": {
+            "url": "",
+            "label": ""
+          }
+        }
+      ]
     }
   },
-  "customSections": [],
+  "customSections": [
+    {
+      "id": "custom-001",
+      "title": "Technical Writing",
+      "type": "publications",
+      "hidden": false,
+      "items": [
+        {
+          "id": "cust-pub-001",
+          "hidden": false,
+          "name": "Advanced Golang Patterns",
+          "publisher": "Hashnode",
+          "date": "2024-05",
+          "website": {
+            "url": "https://hashnode.com",
+            "label": "Read"
+          },
+          "description": "Deep dive into Go design patterns for scalable backend systems"
+        }
+      ]
+    },
+    {
+      "id": "custom-002",
+      "title": "Technical Talks",
+      "type": "projects",
+      "hidden": false,
+      "items": [
+        {
+          "id": "cust-talk-001",
+          "hidden": false,
+          "name": "Microservices at Scale",
+          "period": "2024-03",
+          "website": {
+            "url": "https://youtube.com",
+            "label": "Watch"
+          },
+          "description": "Talk on designing and deploying microservices in production at GopherCon India 2024"
+        }
+      ]
+    }
+  ],
   "metadata": {
     "template": "bronzor",
     "layout": {

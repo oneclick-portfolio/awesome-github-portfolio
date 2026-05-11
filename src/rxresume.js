@@ -157,6 +157,21 @@
     return (resume && resume.summary && resume.summary.content) || '';
   }
 
+  /**
+   * Get custom sections array from resume.
+   * Filters out hidden sections and returns sections with visible items.
+   * @param {Object} resume
+   * @returns {Array}  Array of custom section objects, or empty array
+   */
+  function getCustomSections(resume) {
+    if (!resume || !resume.customSections || !Array.isArray(resume.customSections)) {
+      return [];
+    }
+    return resume.customSections.filter(function (section) {
+      return !section.hidden && section.items && section.items.length > 0;
+    });
+  }
+
   window.RxResumeData = {
     loadResume: loadResume,
     getSection: getSection,
@@ -167,5 +182,6 @@
     getPictureMetadata: getPictureMetadata,
     getBasics: getBasics,
     getSummary: getSummary,
+    getCustomSections: getCustomSections,
   };
 }());

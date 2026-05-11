@@ -1,6 +1,98 @@
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+/* ─── Mobile Navigation ─────────────────────────────────────────────────── */
+class MobileNav {
+  constructor() {
+    this._toggle = document.querySelector('.nav-toggle');
+    this._nav = document.querySelector('.site-nav');
+    if (!this._toggle || !this._nav) return;
+    
+    this._toggle.addEventListener('click', () => this._handleToggle());
+    this._nav.addEventListener('click', (e) => {
+      if (e.target.tagName === 'A') this._close();
+    });
+  }
+
+  _handleToggle() {
+    const isOpen = this._nav.classList.toggle('is-open');
+    this._toggle.setAttribute('aria-expanded', isOpen.toString());
+  }
+
+  _close() {
+    this._nav.classList.remove('is-open');
+    this._toggle.setAttribute('aria-expanded', 'false');
+  }
+}
+
+const mobileNav = new MobileNav();
+
+/* ─── Dynamic Navigation Updates ────────────────────────────────────────── */
+function updateNavigationLinks() {
+  const nav = document.querySelector('.site-nav');
+  if (!nav) return;
+
+  const isVisible = (element) => {
+    if (!element) return false;
+    return !element.hidden && !element.closest('[hidden]');
+  };
+
+  // Define all standard sections in order
+  const sections = [
+    { href: '#summaryText', label: 'Summary', container: '#summarySection' },
+    { href: '#profilesGrid', label: 'Profiles', container: '#profilesSection' },
+    { href: '#experienceList', label: 'Experience', container: '#experience' },
+    { href: '#projectsList', label: 'Projects', container: '#projects' },
+    { href: '#skillsLexicon', label: 'Skills', container: '#skillsSection' },
+    { href: '#educationText', label: 'Education', container: '#educationSection' },
+    { href: '#languagesList', label: 'Languages', container: '#languagesSection' },
+    { href: '#interestsList', label: 'Interests', container: '#interestsSection' },
+    { href: '#awardsList', label: 'Awards', container: '#awardsSection' },
+    { href: '#certificationsList', label: 'Certifications', container: '#certificationsSection' },
+    { href: '#publicationsList', label: 'Publications', container: '#publicationsSection' },
+    { href: '#volunteerList', label: 'Volunteer', container: '#volunteerSection' },
+    { href: '#referencesList', label: 'References', container: '#referencesSection' },
+  ];
+
+  // Add custom sections (after standard)
+  const customContainer = document.getElementById('customSectionsContainer');
+  if (customContainer) {
+    const customSections = customContainer.querySelectorAll('.custom-section-block');
+    customSections.forEach((section) => {
+      const title = section.querySelector('.mini-title')?.textContent;
+      if (title) {
+        sections.push({
+          href: `#${section.id || 'custom-section'}`,
+          label: title,
+          container: `#${section.id || 'custom-section'}`
+        });
+      }
+    });
+  }
+
+  // Find existing nav links
+  const existingLinks = nav.querySelectorAll('a:not(.theme-opt)');
+  
+  // Remove old section links
+  existingLinks.forEach(link => {
+    if (link.href && link.href.includes('#')) {
+      link.remove();
+    }
+  });
+
+  // Add nav links for visible sections only
+  sections.forEach((section) => {
+    const container = document.querySelector(section.container);
+    // Only add if container exists and is visible
+    if (isVisible(container)) {
+      const link = document.createElement('a');
+      link.href = section.href;
+      link.textContent = section.label;
+      nav.appendChild(link);
+    }
+  });
+}
+
 function escapeHtml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
@@ -188,6 +280,125 @@ function setAnchorHref(selector, href) {
   el.href = href;
 }
 
+function renderInterests(items) {
+  const container = $('#interestsList');
+  const block = container ? container.closest('.interests-block') : null;
+  if (!items.length) { if (block) block.hidden = true; return; }
+  if (block) block.hidden = false;
+  items.forEach(function(interest) {
+    var el = document.createElement('div');
+    el.className = 'np-interest-item';
+    el.innerHTML = '<span class="np-interest-name">' + escapeHtml(interest.name || '') + '</span>' +
+      (interest.keywords && interest.keywords.length ? '<span class="np-interest-keywords">' + escapeHtml(interest.keywords.join(', ')) + '</span>' : '');
+    container.appendChild(el);
+  });
+}
+
+function renderAwards(items) {
+  const container = $('#awardsList');
+  const block = container ? container.closest('.awards-block') : null;
+  if (!items.length) { if (block) block.hidden = true; return; }
+  if (block) block.hidden = false;
+  items.forEach(function(award) {
+    var link = window.RxResumeData.getLink(award.website);
+    var el = document.createElement('article');
+    el.className = 'np-timeline-item';
+    el.innerHTML = '<div class="np-item-title">' + (link ? '<a href="' + escapeHtml(link) + '" target="_blank" rel="noopener nofollow">' + escapeHtml(award.title || '') + '</a>' : escapeHtml(award.title || '')) + '</div>' +
+      '<div class="np-item-meta">' + escapeHtml(award.awarder || '') + (award.date ? ' · ' + escapeHtml(award.date) : '') + '</div>' +
+      (award.description ? '<div class="np-item-body">' + sanitizeRichText(award.description) + '</div>' : '');
+    container.appendChild(el);
+  });
+}
+
+function renderCertifications(items) {
+  const container = $('#certificationsList');
+  const block = container ? container.closest('.certifications-block') : null;
+  if (!items.length) { if (block) block.hidden = true; return; }
+  if (block) block.hidden = false;
+  items.forEach(function(cert) {
+    var link = window.RxResumeData.getLink(cert.website);
+    var el = document.createElement('article');
+    el.className = 'np-timeline-item';
+    el.innerHTML = '<div class="np-item-title">' + (link ? '<a href="' + escapeHtml(link) + '" target="_blank" rel="noopener nofollow">' + escapeHtml(cert.title || '') + '</a>' : escapeHtml(cert.title || '')) + '</div>' +
+      '<div class="np-item-meta">' + escapeHtml(cert.issuer || '') + (cert.date ? ' · ' + escapeHtml(cert.date) : '') + '</div>' +
+      (cert.description ? '<div class="np-item-body">' + sanitizeRichText(cert.description) + '</div>' : '');
+    container.appendChild(el);
+  });
+}
+
+function renderPublications(items) {
+  const container = $('#publicationsList');
+  const block = container ? container.closest('.publications-block') : null;
+  if (!items.length) { if (block) block.hidden = true; return; }
+  if (block) block.hidden = false;
+  items.forEach(function(pub) {
+    var link = window.RxResumeData.getLink(pub.website);
+    var el = document.createElement('article');
+    el.className = 'np-timeline-item';
+    el.innerHTML = '<div class="np-item-title">' + (link ? '<a href="' + escapeHtml(link) + '" target="_blank" rel="noopener nofollow">' + escapeHtml(pub.title || '') + '</a>' : escapeHtml(pub.title || '')) + '</div>' +
+      '<div class="np-item-meta">' + escapeHtml(pub.publisher || '') + (pub.date ? ' · ' + escapeHtml(pub.date) : '') + '</div>' +
+      (pub.description ? '<div class="np-item-body">' + sanitizeRichText(pub.description) + '</div>' : '');
+    container.appendChild(el);
+  });
+}
+
+function renderVolunteer(items) {
+  const container = $('#volunteerList');
+  const block = container ? container.closest('.volunteer-block') : null;
+  if (!items.length) { if (block) block.hidden = true; return; }
+  if (block) block.hidden = false;
+  items.forEach(function(vol) {
+    var el = document.createElement('article');
+    el.className = 'np-timeline-item';
+    el.innerHTML = '<div class="np-item-title">' + escapeHtml(vol.organization || '') + '</div>' +
+      '<div class="np-item-meta">' + escapeHtml(vol.position || '') + (vol.period ? ' · ' + escapeHtml(vol.period) : '') + (vol.location ? ' · ' + escapeHtml(vol.location) : '') + '</div>' +
+      (vol.description ? '<div class="np-item-body">' + sanitizeRichText(vol.description) + '</div>' : '');
+    container.appendChild(el);
+  });
+}
+
+function renderReferences(items) {
+  const container = $('#referencesList');
+  const block = container ? container.closest('.references-block') : null;
+  if (!items.length) { if (block) block.hidden = true; return; }
+  if (block) block.hidden = false;
+  items.forEach(function(ref) {
+    var el = document.createElement('article');
+    el.className = 'np-timeline-item';
+    el.innerHTML = '<div class="np-item-title">' + escapeHtml(ref.name || '') + '</div>' +
+      '<div class="np-item-meta">' + escapeHtml(ref.position || '') + (ref.phone ? ' · ' + escapeHtml(ref.phone) : '') + '</div>' +
+      (ref.description ? '<div class="np-item-body">' + sanitizeRichText(ref.description) + '</div>' : '');
+    container.appendChild(el);
+  });
+}
+
+function renderCustomSections(resume) {
+  var container = $('#customSectionsContainer');
+  if (!container) return;
+  var sections = window.RxResumeData.getCustomSections(resume);
+  if (!sections.length) return;
+  sections.forEach(function(customSection) {
+    var block = document.createElement('div');
+    block.className = 'boxed-block custom-section-block';
+    var title = document.createElement('h3');
+    title.className = 'mini-title';
+    title.textContent = customSection.title || '';
+    block.appendChild(title);
+    (customSection.items || []).filter(function(i) { return !i.hidden; }).forEach(function(item) {
+      var el = document.createElement('div');
+      el.className = 'np-timeline-item';
+      var name = item.name || item.title || item.organization || item.position || '';
+      var meta = [item.company || item.issuer || item.publisher || item.awarder || item.school || '', item.date || item.period || ''].filter(Boolean).join(' · ');
+      var link = window.RxResumeData.getLink(item.website);
+      el.innerHTML = '<div class="np-item-title">' + (link ? '<a href="' + escapeHtml(link) + '" target="_blank" rel="noopener nofollow">' + escapeHtml(name) + '</a>' : escapeHtml(name)) + '</div>' +
+        (meta ? '<div class="np-item-meta">' + escapeHtml(meta) + '</div>' : '') +
+        (item.description ? '<div class="np-item-body">' + sanitizeRichText(item.description) + '</div>' : '');
+      block.appendChild(el);
+    });
+    container.appendChild(block);
+  });
+}
+
 async function loadResumeWithFallback() {
   const configuredPath = CONFIG && CONFIG.paths && CONFIG.paths.resumeData ? CONFIG.paths.resumeData : "";
   const candidates = [
@@ -249,14 +460,36 @@ async function initialize() {
     const links = profileLinks(profiles);
     if (basics.email) {
       setAnchorHref("#emailLink", `mailto:${basics.email}`);
+    } else {
+      const emailLink = $("#emailLink");
+      if (emailLink) emailLink.hidden = true;
     }
-    setAnchorHref("#githubLink", links.github);
-    setAnchorHref("#linkedinLink", links.linkedin);
+    
+    if (links.github) {
+      setAnchorHref("#githubLink", links.github);
+    } else {
+      const githubLink = $("#githubLink");
+      if (githubLink) githubLink.hidden = true;
+    }
+    
+    if (links.linkedin) {
+      setAnchorHref("#linkedinLink", links.linkedin);
+    } else {
+      const linkedinLink = $("#linkedinLink");
+      if (linkedinLink) linkedinLink.hidden = true;
+    }
 
     renderExperience(experience);
     renderFocus(skills);
     renderProjects(projects);
     renderLanguages(languages);
+    renderInterests(window.RxResumeData.getItems(resume, 'interests'));
+    renderAwards(window.RxResumeData.getItems(resume, 'awards'));
+    renderCertifications(window.RxResumeData.getItems(resume, 'certifications'));
+    renderPublications(window.RxResumeData.getItems(resume, 'publications'));
+    renderVolunteer(window.RxResumeData.getItems(resume, 'volunteer'));
+    renderReferences(window.RxResumeData.getItems(resume, 'references'));
+    renderCustomSections(resume);
 
     const edu = education[0];
     const degree = firstText(edu?.studyType);
@@ -295,10 +528,14 @@ async function initialize() {
     if (footerLegalEl) {
       footerLegalEl.textContent = `Copyright ${new Date().getFullYear()} all rights reserved.`;
     }
+
+    // Update navigation with visible sections
+    updateNavigationLinks();
+
   } catch (error) {
     console.error("Error loading resume data:", error);
     document.body.innerHTML = CONFIG.errors.resumeLoadError;
   }
 }
 
-initialize();
+document.addEventListener('DOMContentLoaded', initialize);

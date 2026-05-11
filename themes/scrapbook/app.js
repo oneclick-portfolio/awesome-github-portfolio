@@ -2,6 +2,92 @@ let resume = null;
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+/* ─── Mobile Navigation ─────────────────────────────────────────────────── */
+class MobileNav {
+  constructor() {
+    this._toggle = document.querySelector('.nav-toggle');
+    this._nav = document.querySelector('.site-nav');
+    if (!this._toggle || !this._nav) return;
+    
+    this._toggle.addEventListener('click', () => this._handleToggle());
+    this._nav.addEventListener('click', (e) => {
+      if (e.target.tagName === 'A') this._close();
+    });
+  }
+
+  _handleToggle() {
+    const isOpen = this._nav.classList.toggle('is-open');
+    this._toggle.setAttribute('aria-expanded', isOpen.toString());
+  }
+
+  _close() {
+    this._nav.classList.remove('is-open');
+    this._toggle.setAttribute('aria-expanded', 'false');
+  }
+}
+
+const mobileNav = new MobileNav();
+
+/* ─── Dynamic Navigation Updates ────────────────────────────────────────── */
+function updateNavigationLinks() {
+  const nav = document.querySelector('.site-nav');
+  if (!nav) return;
+
+  const isVisible = (element) => {
+    if (!element) return false;
+    return !element.hidden && !element.closest('[hidden]');
+  };
+
+  // Define all standard sections in order
+  const sections = [
+    { href: '#experience', label: 'Work', container: '#experience' },
+    { href: '#projects', label: 'Projects', container: '#projects' },
+    { href: '#education', label: 'Education', container: '#education' },
+    { href: '#skills', label: 'Skills', container: '#skills' },
+    { href: '#languages', label: 'Languages', container: '#languages' },
+    { href: '#interests', label: 'Interests', container: '#interests' },
+    { href: '#awards', label: 'Awards', container: '#awards' },
+    { href: '#certifications', label: 'Certifications', container: '#certifications' },
+    { href: '#publications', label: 'Publications', container: '#publications' },
+    { href: '#volunteer', label: 'Volunteer', container: '#volunteer' },
+    { href: '#references', label: 'References', container: '#references' },
+  ];
+
+  // Add custom sections
+  const customSections = document.querySelectorAll('#customSectionsContainer section');
+  customSections.forEach((section) => {
+    const titleEl = section.querySelector('.cut-out h3');
+    const title = titleEl?.textContent;
+    if (title && section.id) {
+      sections.push({
+        href: `#${section.id}`,
+        label: title,
+        container: `#${section.id}`
+      });
+    }
+  });
+
+  // Find and remove all existing nav links
+  const existingLinks = nav.querySelectorAll('a');
+  existingLinks.forEach(link => {
+    if (link.href && link.href.includes('#')) {
+      link.remove();
+    }
+  });
+
+  // Add nav links for visible sections only
+  sections.forEach((section) => {
+    const container = document.querySelector(section.container);
+    // Only add if container exists and is visible
+    if (container && isVisible(container)) {
+      const link = document.createElement('a');
+      link.href = section.href;
+      link.textContent = section.label;
+      nav.appendChild(link);
+    }
+  });
+}
+
 async function loadResumeData() {
   try {
     resume = await window.RxResumeData.loadResume(CONFIG.paths.resumeData);
@@ -59,7 +145,9 @@ function initializePage() {
 
   /* Experience */
   const expGrid = document.getElementById('experienceGrid');
-  window.RxResumeData.getItems(resume, 'experience').forEach((item, index) => {
+  const expItems = window.RxResumeData.getItems(resume, 'experience');
+  if (!expItems.length) { const s = document.getElementById('experience'); if (s) s.hidden = true; }
+  expItems.forEach((item, index) => {
     const el = document.createElement('article');
     const colors = ['bg-paper-white border-crayon-blue', 'bg-crayon-yellow', 'bg-paper-white border-crayon-green'];
     const rotations = ['-rotate-1', 'rotate-2', '-rotate-2'];
@@ -88,7 +176,9 @@ function initializePage() {
 
   /* Projects */
   const projectsGrid = document.getElementById('projectsGrid');
-  window.RxResumeData.getItems(resume, 'projects').forEach((p, index) => {
+  const projItems = window.RxResumeData.getItems(resume, 'projects');
+  if (!projItems.length) { const s = document.getElementById('projects'); if (s) s.hidden = true; }
+  projItems.forEach((p, index) => {
     const el = document.createElement('article');
     const colors = ['bg-paper-white', 'bg-crayon-yellow', 'bg-paper-white'];
     const rotations = ['rotate-1', '-rotate-2', 'rotate-2'];
@@ -125,7 +215,9 @@ function initializePage() {
 
   /* Education */
   const eduGrid = document.getElementById('educationGrid');
-  window.RxResumeData.getItems(resume, 'education').forEach((ed, index) => {
+  const eduItems = window.RxResumeData.getItems(resume, 'education');
+  if (!eduItems.length) { const s = document.getElementById('education'); if (s) s.hidden = true; }
+  eduItems.forEach((ed, index) => {
     const el = document.createElement('article');
     const colors = ['bg-paper-white border-crayon-green', 'bg-paper-white border-construction-orange'];
     const rotations = ['rotate-1', '-rotate-1'];
@@ -150,6 +242,7 @@ function initializePage() {
   /* Skills */
   const skillsGrid = document.getElementById('skillsGrid');
   const skills = window.RxResumeData.getItems(resume, 'skills');
+  if (!skills.length) { const s = document.getElementById('skills'); if (s) s.hidden = true; }
   const skillsPerColumn = Math.ceil(skills.length / 2);
   
   let skillColumn1 = '';
@@ -182,6 +275,7 @@ function initializePage() {
   /* Languages */
   const languagesGrid = document.getElementById('languagesGrid');
   const languages = window.RxResumeData.getItems(resume, 'languages');
+  if (!languages.length) { const s = document.getElementById('languages'); if (s) s.hidden = true; }
   
   languages.forEach((lang, index) => {
     const el = document.createElement('div');
@@ -194,6 +288,147 @@ function initializePage() {
     el.textContent = `${lang.language} ${lang.fluency ? '- ' + lang.fluency : ''}`;
     languagesGrid.appendChild(el);
   });
+
+  /* Interests */
+  const interestsGrid = document.getElementById('interestsGrid');
+  const interestItems = window.RxResumeData.getItems(resume, 'interests');
+  if (!interestItems.length) { const s = document.getElementById('interests'); if (s) s.hidden = true; }
+  interestItems.forEach(interest => {
+    if (!interestsGrid) return;
+    const el = document.createElement('div');
+    el.className = 'cut-out bg-crayon-yellow px-4 py-2 font-marker text-marker-black border-2 border-marker-black text-sm md:text-base inline-block';
+    el.textContent = interest.name || '';
+    interestsGrid.appendChild(el);
+  });
+
+  /* Awards */
+  const awardsList = document.getElementById('awardsList');
+  const awardItems = window.RxResumeData.getItems(resume, 'awards');
+  if (!awardItems.length) { const s = document.getElementById('awards'); if (s) s.hidden = true; }
+  awardItems.forEach((award, index) => {
+    if (!awardsList) return;
+    const link = window.RxResumeData.getLink(award.website);
+    const borderColors = ['border-crayon-blue', 'border-crayon-green', 'border-construction-orange'];
+    const rotations = ['-rotate-1', 'rotate-1', '-rotate-2'];
+    const el = document.createElement('article');
+    el.className = `cut-out bg-paper-white p-6 md:p-8 ${rotations[index % rotations.length]} shadow-xl border-4 ${borderColors[index % borderColors.length]}`;
+    el.innerHTML = `
+      <div class="font-chunky text-xl md:text-2xl text-marker-black mb-2">${link ? `<a href="${link}" target="_blank" rel="noopener" class="underline hover:opacity-80">${award.title || ''}</a>` : (award.title || '')}</div>
+      <div class="font-marker text-sm text-crayon-blue mb-2">${award.awarder || ''}${award.date ? ' · ' + award.date : ''}</div>
+      ${award.description ? `<p class="text-sm text-marker-black">${award.description}</p>` : ''}
+    `;
+    awardsList.appendChild(el);
+  });
+
+  /* Certifications */
+  const certificationsList = document.getElementById('certificationsList');
+  const certItems = window.RxResumeData.getItems(resume, 'certifications');
+  if (!certItems.length) { const s = document.getElementById('certifications'); if (s) s.hidden = true; }
+  certItems.forEach((cert, index) => {
+    if (!certificationsList) return;
+    const link = window.RxResumeData.getLink(cert.website);
+    const borderColors = ['border-crayon-green', 'border-crayon-blue', 'border-crayon-red'];
+    const rotations = ['rotate-1', '-rotate-1', 'rotate-2'];
+    const el = document.createElement('article');
+    el.className = `cut-out bg-paper-white p-6 md:p-8 ${rotations[index % rotations.length]} shadow-xl border-4 ${borderColors[index % borderColors.length]}`;
+    el.innerHTML = `
+      <div class="font-chunky text-xl md:text-2xl text-marker-black mb-2">${link ? `<a href="${link}" target="_blank" rel="noopener" class="underline hover:opacity-80">${cert.title || ''}</a>` : (cert.title || '')}</div>
+      <div class="font-marker text-sm text-crayon-green mb-2">${cert.issuer || ''}${cert.date ? ' · ' + cert.date : ''}</div>
+      ${cert.description ? `<p class="text-sm text-marker-black">${cert.description}</p>` : ''}
+    `;
+    certificationsList.appendChild(el);
+  });
+
+  /* Publications */
+  const publicationsList = document.getElementById('publicationsList');
+  const pubItems = window.RxResumeData.getItems(resume, 'publications');
+  if (!pubItems.length) { const s = document.getElementById('publications'); if (s) s.hidden = true; }
+  pubItems.forEach((pub, index) => {
+    if (!publicationsList) return;
+    const link = window.RxResumeData.getLink(pub.website);
+    const borderColors = ['border-crayon-blue', 'border-construction-orange', 'border-crayon-green'];
+    const rotations = ['-rotate-2', 'rotate-1', '-rotate-1'];
+    const el = document.createElement('article');
+    el.className = `cut-out bg-paper-white p-6 md:p-8 ${rotations[index % rotations.length]} shadow-xl border-4 ${borderColors[index % borderColors.length]}`;
+    el.innerHTML = `
+      <div class="font-chunky text-xl md:text-2xl text-marker-black mb-2">${link ? `<a href="${link}" target="_blank" rel="noopener" class="underline hover:opacity-80">${pub.title || ''}</a>` : (pub.title || '')}</div>
+      <div class="font-marker text-sm text-crayon-blue mb-2">${pub.publisher || ''}${pub.date ? ' · ' + pub.date : ''}</div>
+      ${pub.description ? `<p class="text-sm text-marker-black">${pub.description}</p>` : ''}
+    `;
+    publicationsList.appendChild(el);
+  });
+
+  /* Volunteer */
+  const volunteerList = document.getElementById('volunteerList');
+  const volItems = window.RxResumeData.getItems(resume, 'volunteer');
+  if (!volItems.length) { const s = document.getElementById('volunteer'); if (s) s.hidden = true; }
+  volItems.forEach((vol, index) => {
+    if (!volunteerList) return;
+    const borderColors = ['border-crayon-red', 'border-crayon-blue', 'border-construction-orange'];
+    const rotations = ['rotate-2', '-rotate-1', 'rotate-1'];
+    const el = document.createElement('article');
+    el.className = `cut-out bg-paper-white p-6 md:p-8 ${rotations[index % rotations.length]} shadow-xl border-4 ${borderColors[index % borderColors.length]}`;
+    el.innerHTML = `
+      <div class="font-chunky text-xl md:text-2xl text-marker-black mb-2">${vol.organization || ''}</div>
+      <div class="font-marker text-sm text-crayon-red mb-2">${vol.position || ''}${vol.period ? ' · ' + vol.period : ''}${vol.location ? ' · ' + vol.location : ''}</div>
+      ${vol.description ? `<p class="text-sm text-marker-black">${vol.description}</p>` : ''}
+    `;
+    volunteerList.appendChild(el);
+  });
+
+  /* References */
+  const referencesList = document.getElementById('referencesList');
+  const refItems = window.RxResumeData.getItems(resume, 'references');
+  if (!refItems.length) { const s = document.getElementById('references'); if (s) s.hidden = true; }
+  refItems.forEach((ref, index) => {
+    if (!referencesList) return;
+    const borderColors = ['border-marker-black', 'border-crayon-blue', 'border-crayon-green'];
+    const rotations = ['-rotate-1', 'rotate-2', '-rotate-2'];
+    const el = document.createElement('article');
+    el.className = `cut-out bg-paper-white p-6 md:p-8 ${rotations[index % rotations.length]} shadow-xl border-4 ${borderColors[index % borderColors.length]}`;
+    el.innerHTML = `
+      <div class="font-chunky text-xl md:text-2xl text-marker-black mb-2">${ref.name || ''}</div>
+      <div class="font-marker text-sm text-marker-black mb-2">${ref.position || ''}${ref.phone ? ' · ' + ref.phone : ''}</div>
+      ${ref.description ? `<p class="text-sm text-marker-black">${ref.description}</p>` : ''}
+    `;
+    referencesList.appendChild(el);
+  });
+
+  /* Custom Sections */
+  const customSectionsContainer = document.getElementById('customSectionsContainer');
+  const customSects = window.RxResumeData.getCustomSections(resume);
+  if (customSectionsContainer && customSects.length > 0) {
+    customSects.forEach(customSection => {
+      const sectionEl = document.createElement('section');
+      sectionEl.className = 'mb-32 relative';
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'cut-out bg-crayon-yellow px-8 py-2 inline-block rotate-1 mb-12 border-4 border-white';
+      headerDiv.innerHTML = `<h3 class="font-chunky text-3xl md:text-4xl text-marker-black">${customSection.title || ''}</h3>`;
+      sectionEl.appendChild(headerDiv);
+      const itemsGrid = document.createElement('div');
+      itemsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-8';
+      (customSection.items || []).filter(i => !i.hidden).forEach((item, index) => {
+        const borderColors = ['border-crayon-blue', 'border-crayon-green', 'border-construction-orange'];
+        const rotations = ['-rotate-1', 'rotate-1', '-rotate-2'];
+        const el = document.createElement('article');
+        el.className = `cut-out bg-paper-white p-6 md:p-8 ${rotations[index % rotations.length]} shadow-xl border-4 ${borderColors[index % borderColors.length]}`;
+        const name = item.name || item.title || item.organization || item.position || '';
+        const meta = [item.company || item.issuer || item.publisher || item.awarder || item.school || '', item.date || item.period || ''].filter(Boolean).join(' · ');
+        const link = window.RxResumeData.getLink(item.website);
+        el.innerHTML = `
+          <div class="font-chunky text-xl md:text-2xl text-marker-black mb-2">${link ? `<a href="${link}" target="_blank" rel="noopener" class="underline hover:opacity-80">${name}</a>` : name}</div>
+          ${meta ? `<div class="font-marker text-sm text-crayon-blue mb-2">${meta}</div>` : ''}
+          ${item.description ? `<p class="text-sm text-marker-black">${item.description}</p>` : ''}
+        `;
+        itemsGrid.appendChild(el);
+      });
+      sectionEl.appendChild(itemsGrid);
+      customSectionsContainer.appendChild(sectionEl);
+    });
+  }
+
+  // Update navigation links after all content is loaded
+  updateNavigationLinks();
 }
 
 /* Load Profile Picture */

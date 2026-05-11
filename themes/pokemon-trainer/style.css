@@ -9,6 +9,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
+  /* --- Base Colors (Light Theme) --- */
   --red:       #cc0000;
   --red-dark:  #990000;
   --red-light: #ff4444;
@@ -22,15 +23,55 @@
   --yellow:    #ffd700;
   --blue:      #3b4cca;
   --blue-light:#6c77d4;
-  --border-px: 3px solid var(--black);
-  --shadow-px: 4px 4px 0 var(--black);
+
+  /* --- Semantic Colors --- */
+  --bg:        #120505;
+  --surface:   #f4f8ff;
+  --surface-alt: rgba(8, 4, 4, 0.32);
+  --ink:       #1a1008;
+  --muted:     #7a6a50;
+  --accent:    #cc0000;
+  --link:      #3b4cca;
   --card-bg:   #fffde7;
-  --screen-bg: #9bbc0f; /* Game Boy green tint on screens */
+  --screen-bg: #9bbc0f;
+
+  /* --- Panel Colors --- */
   --panel-blue: #2f4d8f;
   --panel-blue-dark: #1f3263;
   --panel-shell: #dce7fb;
   --panel-border: #5f7ec2;
+
+  /* --- Border & Shadow --- */
+  --border-px: 3px solid var(--black);
+  --shadow-px: 4px 4px 0 var(--black);
+
+  /* --- Spacing Scale --- */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+
+  /* --- Typography Scale --- */
+  --text-xs:   0.4rem;
+  --text-sm:   0.5rem;
+  --text-base: 0.75rem;
+  --text-lg:   0.85rem;
+  --text-xl:   1rem;
+  --text-2xl:  1.25rem;
+
+  /* --- Border Radius --- */
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 12px;
+
+  /* --- Z-Index --- */
+  --z-sticky: 100;
+  --z-overlay: 999;
 }
+
 
 html { scroll-behavior: smooth; }
 
@@ -120,8 +161,14 @@ a { color: inherit; text-decoration: none; }
   flex-shrink: 0;
   box-shadow: var(--shadow-px);
 }
-.pb-top    { height: 13px; background: var(--white); }
-.pb-bottom { height: 13px; background: #333; }
+.pb-top {
+  height: 13px;
+  background: linear-gradient(180deg, #ff5a5a 0%, #d71f1f 55%, #b10d0d 100%);
+}
+.pb-bottom {
+  height: 13px;
+  background: linear-gradient(180deg, #ffffff 0%, #f2f2f2 65%, #d9d9d9 100%);
+}
 .pb-band {
   height: 6px;
   background: var(--black);
@@ -130,11 +177,12 @@ a { color: inherit; text-decoration: none; }
   justify-content: center;
 }
 .pb-btn {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: var(--white);
+  background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f5f5f5 45%, #d7d7d7 100%);
   border: 2px solid var(--black);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
 }
 
 .header-title {
@@ -153,27 +201,121 @@ a { color: inherit; text-decoration: none; }
   gap: 0.5rem;
 }
 
-.nav-btn {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.5rem;
-  color: var(--white);
+.nav-toggle {
+  display: none;
   background: transparent;
   border: 2px solid rgba(255,255,255,0.4);
-  border-radius: 4px;
-  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-md);
+  color: var(--white);
+  font-size: 1.25rem;
+  padding: 0.35rem 0.5rem;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
-  white-space: nowrap;
 }
-.nav-btn:hover { background: rgba(255,255,255,0.15); border-color: var(--white); }
-.nav-btn--primary {
+.nav-toggle:hover { background: rgba(255,255,255,0.15); border-color: var(--white); }
+.nav-toggle:focus { outline: 2px solid var(--white); outline-offset: 2px; }
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  transition: all 0.3s ease;
+}
+
+.bulletin-shell {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(70, 0, 0, 0.9), rgba(40, 0, 0, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.bulletin-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: poke-bulletin-scroll 28s linear infinite;
+}
+
+.bulletin-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.2rem 0.35rem;
+}
+
+.bulletin-shell:hover .bulletin-track,
+.bulletin-shell:focus-within .bulletin-track {
+  animation-play-state: paused;
+}
+
+@keyframes poke-bulletin-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* --- Bullet Navigation --- */
+.nav-bullet {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  color: var(--white);
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+  border: 2px solid rgba(255,255,255,0.5);
+  border-radius: 20px;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.nav-bullet:hover {
+  background: linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0.15));
+  border-color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.nav-bullet:active {
+  transform: translateY(0);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.nav-bullet:focus {
+  outline: 2px solid var(--white);
+  outline-offset: 2px;
+}
+
+.nav-bullet--primary {
   background: var(--yellow);
   color: var(--black);
   border-color: var(--black);
-  box-shadow: 2px 2px 0 var(--black);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 2px 4px rgba(0,0,0,0.3);
+  border-radius: 20px;
+  flex-shrink: 0;
 }
-.nav-btn--primary:hover { background: #ffe033; }
 
+.nav-bullet--primary:hover {
+  background: #ffe033;
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.nav-bullet--primary:active {
+  transform: translateY(0);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
 /* =========================================
    Trainer Card Hero
    ========================================= */
@@ -791,17 +933,310 @@ a { color: inherit; text-decoration: none; }
 ::-webkit-scrollbar-thumb { background: var(--black); border-radius: 4px; }
 
 /* =========================================
-   Responsive
+   New Sections (interests, awards, certs, pubs, volunteer, refs, custom)
    ========================================= */
-@media (max-width: 640px) {
-  .trainer-card__body { grid-template-columns: 1fr; }
-  .trainer-card__portrait { order: -1; flex-direction: row; gap: 1rem; }
-  .profile-natural { max-width: 120px; max-height: 120px; }
-  .trainer-hud { width: 100px; }
-  .header-title { display: none; }
-  .item-grid { grid-template-columns: 1fr; }
-  .skills-board { grid-template-columns: 1fr; }
-  .badges-grid { grid-template-columns: repeat(3, minmax(80px, 1fr)); }
-  .gym-badge__hex { width: 74px; height: 84px; }
-  .nav-btn { font-size: 0.45rem; padding: 0.3rem 0.5rem; }
+.ui-card-chip--award {
+  background: linear-gradient(180deg, #ffd58c, #d89a32);
+}
+.ui-card-chip--vol {
+  background: linear-gradient(180deg, #b8f5b0, #4db847);
+}
+.ui-card-chip--ref {
+  background: linear-gradient(180deg, #d9b3ff, #8b45c9);
+}
+
+/* =========================================
+   Responsive (Mobile @ 720px breakpoint)
+   ========================================= */
+@media (max-width: 720px) {
+  :root {
+    --text-xs:   0.35rem;
+    --text-sm:   0.45rem;
+    --text-base: 0.65rem;
+  }
+
+  /* Header Mobile */
+  .header-inner {
+    height: 56px;
+    padding: 0 1rem;
+  }
+
+  .header-title {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: block;
+  }
+
+  .site-nav {
+    position: fixed;
+    top: 56px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(180deg, #b00000, #7f0000);
+    border-top: 4px solid var(--black);
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    max-width: 100vw;
+    z-index: 99;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+  }
+
+  .site-nav.is-open {
+    max-height: calc(100vh - 56px);
+    opacity: 1;
+    overflow-y: auto;
+  }
+
+    .bulletin-shell {
+      width: 100%;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .bulletin-track {
+      animation: none;
+      display: block;
+      width: 100%;
+    }
+
+    .bulletin-strip {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0;
+    }
+
+    .bulletin-strip.is-clone {
+      display: none;
+    }
+
+    .nav-bullet {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-size: 0.45rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  #emailLink {
+    margin-top: 0.5rem;
+  }
+
+  /* Pokeball Logo */
+  .pokeball-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Trainer Card Mobile */
+  .trainer-card-section {
+    padding: 1.5rem 1rem;
+  }
+
+  .trainer-card {
+    border-radius: 8px;
+    box-shadow: 6px 6px 0 var(--black);
+  }
+
+  .trainer-card__body {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .trainer-card__portrait {
+    order: -1;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .profile-natural {
+    max-width: 100px;
+    max-height: 100px;
+  }
+
+  .trainer-hud {
+    width: 90px;
+  }
+
+  .tc-label {
+    font-size: 0.45rem;
+    min-width: 50px;
+  }
+
+  .tc-value {
+    font-size: 0.5rem;
+  }
+
+  .tc-summary {
+    font-size: 0.75rem;
+  }
+
+  .poke-btn {
+    font-size: 0.42rem;
+    padding: 0.3rem 0.7rem;
+  }
+
+  /* Sections Mobile */
+  .poke-section {
+    padding: 1.5rem 0;
+  }
+
+  .section-title {
+    font-size: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Item Grid Mobile */
+  .item-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Skills Board Mobile */
+  .skills-board {
+    grid-template-columns: 1fr;
+  }
+
+  .badges-grid {
+    grid-template-columns: repeat(3, minmax(70px, 1fr));
+  }
+
+  .gym-badge__hex {
+    width: 64px;
+    height: 72px;
+  }
+
+  .gym-badge__icon {
+    font-size: 1.5rem;
+  }
+
+  .gym-badge__name {
+    font-size: 0.3rem;
+  }
+
+  /* Moves Grid Mobile */
+  .moves-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .move-chip {
+    font-size: 0.35rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  /* Language List Mobile */
+  .lang-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Card Chip Mobile */
+  .ui-card-chip {
+    font-size: 0.35rem;
+    padding: 0.15rem 0.35rem;
+  }
+
+  .ui-card-chip--exp {
+    background: linear-gradient(180deg, #ff7e73, #cf3d32);
+  }
+
+  .ui-card-chip--project {
+    background: linear-gradient(180deg, #95c0ff, #4d77bd);
+  }
+
+  .ui-card-chip--edu {
+    background: linear-gradient(180deg, #ffd58c, #d89a32);
+  }
+
+  /* Battle Item Mobile */
+  .battle-item {
+    padding: 0.75rem 1rem;
+  }
+
+  .battle-item__title {
+    font-size: 0.42rem;
+  }
+
+  .battle-item__period {
+    font-size: 0.35rem;
+    padding: 0.15rem 0.35rem;
+  }
+
+  .battle-item__body {
+    font-size: 0.75rem;
+  }
+
+  /* Item Card Mobile */
+  .item-card {
+    padding: 1rem;
+  }
+
+  .item-card__name {
+    font-size: 0.42rem;
+  }
+
+  .item-card__desc {
+    font-size: 0.75rem;
+  }
+
+  /* Dex Entry Mobile */
+  .dex-entry {
+    padding: 0.75rem 1rem;
+  }
+
+  .dex-entry__title {
+    font-size: 0.42rem;
+  }
+
+  .dex-entry__meta {
+    font-size: 0.7rem;
+  }
+
+  .dex-entry__body {
+    font-size: 0.75rem;
+  }
+
+  /* Container Mobile */
+  .container {
+    padding: 0 1rem;
+  }
+
+  /* Footer Mobile */
+  .poke-footer {
+    padding: 1.5rem;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .footer-brand {
+    flex-direction: column;
+  }
+
+  .footer-loc {
+    font-size: 0.7rem;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .footer-links a {
+    font-size: 0.7rem;
+  }
 }
