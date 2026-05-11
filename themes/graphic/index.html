@@ -21,10 +21,8 @@
           <span class="poster-brand-dot"></span>
           <span class="poster-brand-name" data-name></span>
         </div>
-        <nav class="poster-nav">
-          <a href="#p-experience">Experience</a>
-          <a href="#p-projects">Projects</a>
-          <a href="#p-skills">Skills</a>
+        <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
+        <nav class="site-nav" aria-label="Primary">
           <a class="poster-email-btn" id="emailLink" target="_blank" rel="noopener">Email</a>
         </nav>
       </div>
@@ -57,6 +55,36 @@
           <h2 class="poster-section-title" id="profilesTitle"></h2>
           <div class="poster-expertise-grid" id="profilesGrid"></div>
         </section>
+
+        <!-- Education -->
+        <section class="poster-section">
+          <h2 class="poster-section-title">EDUCATION</h2>
+          <div id="educationList" class="poster-education"></div>
+        </section>
+
+        <!-- Languages -->
+        <section class="poster-section">
+          <h2 class="poster-section-title">LANGUAGES</h2>
+          <div id="languagesListLeft" class="poster-languages"></div>
+        </section>
+
+        <!-- Interests (Left Column) -->
+        <section class="poster-section">
+          <h2 class="poster-section-title">INTERESTS</h2>
+          <div id="interestsListLeft" class="poster-interests"></div>
+        </section>
+
+        <!-- Skills (Left Column) -->
+        <section class="poster-section">
+          <h2 class="poster-section-title">SKILLS</h2>
+          <div id="skillsListLeft" class="poster-skills"></div>
+        </section>
+
+        <!-- Volunteer (Left Column) -->
+        <section class="poster-section">
+          <h2 class="poster-section-title">VOLUNTEER</h2>
+          <div id="volunteerListLeft" class="poster-volunteer"></div>
+        </section>
       </div>
 
       <!-- Right Column -->
@@ -73,17 +101,32 @@
           <div id="projectsGrid" class="poster-projects-grid"></div>
         </section>
 
-        <!-- Skills -->
-        <section id="p-skills" class="poster-section">
-          <h2 class="poster-section-title">SKILLS</h2>
-          <div id="skillsCloud" class="poster-skills"></div>
+        <!-- Awards -->
+        <section class="poster-section">
+          <h2 class="poster-section-title">AWARDS</h2>
+          <div id="awardsList" class="poster-awards"></div>
         </section>
 
-        <!-- Languages -->
+        <!-- Certifications -->
         <section class="poster-section">
-          <h2 class="poster-section-title">LANGUAGES</h2>
-          <div id="languagesList" class="poster-languages"></div>
+          <h2 class="poster-section-title">CERTIFICATIONS</h2>
+          <div id="certificationsList" class="poster-certifications"></div>
         </section>
+
+        <!-- Publications -->
+        <section class="poster-section">
+          <h2 class="poster-section-title">PUBLICATIONS</h2>
+          <div id="publicationsList" class="poster-publications"></div>
+        </section>
+
+        <!-- References -->
+        <section class="poster-section">
+          <h2 class="poster-section-title">REFERENCES</h2>
+          <div id="referencesList" class="poster-references"></div>
+        </section>
+
+        <!-- Custom Sections -->
+        <div id="customSectionsContainer"></div>
       </div>
     </div>
 

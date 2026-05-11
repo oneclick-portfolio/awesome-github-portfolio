@@ -24,11 +24,12 @@
         </div>
         <span class="header-title pixel" data-name></span>
       </div>
-      <nav class="header-nav">
-        <a href="#experience" class="nav-btn">EXP</a>
-        <a href="#projects" class="nav-btn">ITEMS</a>
-        <a href="#skills" class="nav-btn">MOVES</a>
-        <a id="emailLink" class="nav-btn nav-btn--primary" target="_blank" rel="noopener">CONTACT</a>
+      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
+      <nav class="header-nav site-nav">
+         <a href="#experience" class="nav-bullet">EXP</a>
+         <a href="#projects" class="nav-bullet">ITEMS</a>
+         <a href="#skills" class="nav-bullet">MOVES</a>
+         <a id="emailLink" class="nav-bullet nav-bullet--primary" target="_blank" rel="noopener">CONTACT</a>
       </nav>
     </div>
   </header>
@@ -123,6 +124,57 @@
         <div id="languagesList" class="lang-list"></div>
       </div>
     </section>
+
+    <!-- Interests = Passions -->
+    <section id="interests" class="poke-section poke-section--alt">
+      <div class="container">
+        <h2 class="section-title pixel">INTERESTS</h2>
+        <div id="interestsList" class="moves-grid"></div>
+      </div>
+    </section>
+
+    <!-- Awards = Hall of Fame -->
+    <section id="awards" class="poke-section">
+      <div class="container">
+        <h2 class="section-title pixel">HALL OF FAME</h2>
+        <div id="awardsList" class="battle-list"></div>
+      </div>
+    </section>
+
+    <!-- Certifications = Certified Moves -->
+    <section id="certifications" class="poke-section poke-section--alt">
+      <div class="container">
+        <h2 class="section-title pixel">CERTIFIED MOVES</h2>
+        <div id="certificationsList" class="battle-list"></div>
+      </div>
+    </section>
+
+    <!-- Publications = Field Notes -->
+    <section id="publications" class="poke-section">
+      <div class="container">
+        <h2 class="section-title pixel">FIELD NOTES</h2>
+        <div id="publicationsList" class="battle-list"></div>
+      </div>
+    </section>
+
+    <!-- Volunteer = Guild Quests -->
+    <section id="volunteer" class="poke-section poke-section--alt">
+      <div class="container">
+        <h2 class="section-title pixel">GUILD QUESTS</h2>
+        <div id="volunteerList" class="battle-list"></div>
+      </div>
+    </section>
+
+    <!-- References = Allies -->
+    <section id="references" class="poke-section">
+      <div class="container">
+        <h2 class="section-title pixel">ALLIES</h2>
+        <div id="referencesList" class="lang-list"></div>
+      </div>
+    </section>
+
+    <!-- Custom Sections -->
+    <div id="customSectionsContainer"></div>
   </main>
 
   <footer class="poke-footer">

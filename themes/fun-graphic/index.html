@@ -17,22 +17,25 @@
     <header class="site-header">
       <div class="container nav-bar">
         <a class="brand" href="#top" aria-label="Jump to top">
-          <span class="brand-mark"></span>
           <span class="brand-copy">
             <span class="brand-label">Portfolio</span>
             <span class="brand-name" data-name></span>
           </span>
         </a>
+        <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
         <nav class="site-nav" aria-label="Primary">
-          <a href="#experience">Experience</a>
-          <a href="#projects">Projects</a>
-          <a href="#craft">Craft</a>
+          <div class="theme-toggle" role="radiogroup" aria-label="Color theme">
+            <button class="theme-opt" data-theme="dark" aria-label="Dark theme" title="Dark">🌙</button>
+            <button class="theme-opt is-active" data-theme="system" aria-label="System theme" title="System">⬡</button>
+            <button class="theme-opt" data-theme="light" aria-label="Light theme" title="Light">☀</button>
+          </div>
           <a id="emailLink" class="nav-cta" target="_blank" rel="noopener">Email</a>
         </nav>
       </div>
     </header>
 
     <main id="top">
+      <div id="summarySection"></div>
       <section class="hero-section">
         <div class="container hero-grid">
           <div class="hero-copy">
@@ -78,6 +81,7 @@
                 <span id="signalWebsite"></span>
                 <span id="signalEmail"></span>
               </div>
+              <div id="profilesSection"></div>
               <div class="profile-list" id="profilesGrid"></div>
             </div>
           </aside>
@@ -105,6 +109,7 @@
         </div>
       </section>
 
+      <div id="experienceSection"></div>
       <section id="experience" class="content-section">
         <div class="container section-grid">
           <div class="section-intro">
@@ -115,6 +120,7 @@
         </div>
       </section>
 
+      <div id="projectsSection"></div>
       <section id="projects" class="content-section alt-surface">
         <div class="container section-grid">
           <div class="section-intro">
@@ -127,7 +133,8 @@
 
       <section id="craft" class="content-section">
         <div class="container craft-grid">
-          <section class="craft-panel">
+          <div id="skillsSection"></div>
+          <section class="craft-panel" id="skills-section">
             <div class="panel-head">
               <p class="section-kicker">Skills</p>
               <h2>Tools and specialties.</h2>
@@ -135,7 +142,8 @@
             <div class="skills-cloud" id="skillsCloud"></div>
           </section>
 
-          <section class="craft-panel">
+          <div id="educationSection"></div>
+          <section class="craft-panel" id="education-section" style="grid-row: span 2;">
             <div class="panel-head">
               <p class="section-kicker">Education</p>
               <h2>Learning foundation.</h2>
@@ -143,13 +151,70 @@
             <div class="education-list" id="educationList"></div>
           </section>
 
-          <section class="craft-panel craft-panel-wide">
+          <div id="languagesSection"></div>
+          <section class="craft-panel" id="languages-section">
             <div class="panel-head">
               <p class="section-kicker">Languages</p>
               <h2>Communication range.</h2>
             </div>
             <div class="language-list" id="languagesList"></div>
           </section>
+
+          <div id="interestsSection"></div>
+          <section class="craft-panel craft-panel-wide" id="interests-section">
+            <div class="panel-head">
+              <p class="section-kicker">Interests</p>
+              <h2>What I'm passionate about.</h2>
+            </div>
+            <div class="interests-list" id="interestsList"></div>
+          </section>
+
+          <div id="awardsSection"></div>
+          <section class="craft-panel craft-panel-wide" id="awards-section">
+            <div class="panel-head">
+              <p class="section-kicker">Awards</p>
+              <h2>Recognition.</h2>
+            </div>
+            <div class="awards-list" id="awardsList"></div>
+          </section>
+
+          <div id="certificationsSection"></div>
+          <section class="craft-panel craft-panel-wide" id="certifications-section">
+            <div class="panel-head">
+              <p class="section-kicker">Certifications</p>
+              <h2>Credentials.</h2>
+            </div>
+            <div class="certifications-list" id="certificationsList"></div>
+          </section>
+
+          <div id="publicationsSection"></div>
+          <section class="craft-panel craft-panel-wide" id="publications-section">
+            <div class="panel-head">
+              <p class="section-kicker">Publications</p>
+              <h2>Published work.</h2>
+            </div>
+            <div class="publications-list" id="publicationsList"></div>
+          </section>
+
+          <div id="volunteerSection"></div>
+          <section class="craft-panel craft-panel-wide" id="volunteer-section">
+            <div class="panel-head">
+              <p class="section-kicker">Volunteer</p>
+              <h2>Community service.</h2>
+            </div>
+            <div class="volunteer-list" id="volunteerList"></div>
+          </section>
+
+          <div id="referencesSection"></div>
+          <section class="craft-panel craft-panel-wide" id="references-section">
+            <div class="panel-head">
+              <p class="section-kicker">References</p>
+              <h2>Professional references.</h2>
+            </div>
+            <div class="references-list" id="referencesList"></div>
+          </section>
+
+          <div id="customSectionsContainer"></div>
         </div>
       </section>
     </main>

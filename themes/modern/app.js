@@ -210,6 +210,200 @@ function enableTilt(cards) {
       }).join('');
     }
   }
+
+  /* Interests */
+  const interestsList = document.getElementById('interestsList');
+  const interests = window.RxResumeData.getItems(resume, 'interests');
+  if (interestsList && interests.length > 0) {
+    interests.forEach(interest => {
+      const el = document.createElement('div');
+      el.className = 'interest-item animate-on-scroll';
+      el.innerHTML = `
+        <div class="interest-name">${interest.name || ''}</div>
+        ${interest.keywords && interest.keywords.length > 0 ? `<div class="interest-keywords">${interest.keywords.join(', ')}</div>` : ''}
+      `;
+      interestsList.appendChild(el);
+    });
+  }
+
+  /* Awards */
+  const awardsList = document.getElementById('awardsList');
+  const awards = window.RxResumeData.getItems(resume, 'awards');
+  if (awardsList && awards.length > 0) {
+    awards.forEach(award => {
+      const el = document.createElement('article');
+      el.className = 'award-item animate-on-scroll';
+      const awardLink = window.RxResumeData.getLink(award.website);
+      el.innerHTML = `
+        <div class="timeline-title">${awardLink ? `<a href="${awardLink}" target="_blank" rel="noopener">${award.title}</a>` : award.title}</div>
+        <div class="timeline-meta">${award.awarder || ''} ${award.date ? '• ' + award.date : ''}</div>
+        ${award.description ? `<div class="timeline-body">${award.description}</div>` : ''}
+      `;
+      awardsList.appendChild(el);
+    });
+  }
+
+  /* Certifications */
+  const certificationsList = document.getElementById('certificationsList');
+  const certifications = window.RxResumeData.getItems(resume, 'certifications');
+  if (certificationsList && certifications.length > 0) {
+    certifications.forEach(cert => {
+      const el = document.createElement('article');
+      el.className = 'cert-item animate-on-scroll';
+      const certLink = window.RxResumeData.getLink(cert.website);
+      el.innerHTML = `
+        <div class="timeline-title">${certLink ? `<a href="${certLink}" target="_blank" rel="noopener">${cert.title}</a>` : cert.title}</div>
+        <div class="timeline-meta">${cert.issuer || ''} ${cert.date ? '• ' + cert.date : ''}</div>
+        ${cert.description ? `<div class="timeline-body">${cert.description}</div>` : ''}
+      `;
+      certificationsList.appendChild(el);
+    });
+  }
+
+  /* Publications */
+  const publicationsList = document.getElementById('publicationsList');
+  const publications = window.RxResumeData.getItems(resume, 'publications');
+  if (publicationsList && publications.length > 0) {
+    publications.forEach(pub => {
+      const el = document.createElement('article');
+      el.className = 'publication-item animate-on-scroll';
+      const pubLink = window.RxResumeData.getLink(pub.website);
+      el.innerHTML = `
+        <div class="timeline-title">${pubLink ? `<a href="${pubLink}" target="_blank" rel="noopener">${pub.title}</a>` : pub.title}</div>
+        <div class="timeline-meta">${pub.publisher || ''} ${pub.date ? '• ' + pub.date : ''}</div>
+        ${pub.description ? `<div class="timeline-body">${pub.description}</div>` : ''}
+      `;
+      publicationsList.appendChild(el);
+    });
+  }
+
+  /* Volunteer */
+  const volunteerList = document.getElementById('volunteerList');
+  const volunteer = window.RxResumeData.getItems(resume, 'volunteer');
+  if (volunteerList && volunteer.length > 0) {
+    volunteer.forEach(vol => {
+      const el = document.createElement('article');
+      el.className = 'volunteer-item animate-on-scroll';
+      const volLink = window.RxResumeData.getLink(vol.website);
+      el.innerHTML = `
+        <div class="timeline-title">${vol.organization || ''}</div>
+        <div class="timeline-meta">${vol.location || ''} ${vol.period ? '• ' + vol.period : ''}</div>
+        ${vol.description ? `<div class="timeline-body">${vol.description}</div>` : ''}
+      `;
+      volunteerList.appendChild(el);
+    });
+  }
+
+  /* References */
+  const referencesList = document.getElementById('referencesList');
+  const references = window.RxResumeData.getItems(resume, 'references');
+  if (referencesList && references.length > 0) {
+    references.forEach(ref => {
+      const el = document.createElement('article');
+      el.className = 'reference-item animate-on-scroll';
+      const refLink = window.RxResumeData.getLink(ref.website);
+      el.innerHTML = `
+        <div class="timeline-title">${ref.name || ''}</div>
+        <div class="timeline-meta">${ref.position || ''} ${ref.phone ? '• ' + ref.phone : ''}</div>
+        ${ref.description ? `<div class="timeline-body">${ref.description}</div>` : ''}
+      `;
+      referencesList.appendChild(el);
+    });
+  }
+
+  /* Custom Sections */
+  const customSectionsContainer = document.getElementById('customSectionsContainer');
+  const customSections = window.RxResumeData.getCustomSections(resume);
+  if (customSectionsContainer && customSections.length > 0) {
+    customSections.forEach(customSection => {
+      const sectionEl = document.createElement('section');
+      sectionEl.id = 'custom-' + (customSection.id || customSection.title.toLowerCase().replace(/\s+/g, '-'));
+      sectionEl.className = 'section custom-section';
+      
+      const containerDiv = document.createElement('div');
+      containerDiv.className = 'container';
+      
+      const headDiv = document.createElement('div');
+      headDiv.className = 'section-head';
+      const titleEl = document.createElement('h2');
+      titleEl.textContent = customSection.title || '';
+      headDiv.appendChild(titleEl);
+      containerDiv.appendChild(headDiv);
+      
+      const itemsDiv = document.createElement('div');
+      itemsDiv.className = 'custom-items custom-items-' + (customSection.type || 'default');
+      
+      // Render items based on custom section type
+      (customSection.items || []).forEach(item => {
+        if (!item.hidden) {
+          const itemEl = document.createElement('div');
+          itemEl.className = 'custom-item animate-on-scroll';
+          
+          // Render based on item type
+          if (customSection.type === 'experience' || customSection.type === 'volunteer') {
+            const link = window.RxResumeData.getLink(item.website);
+            itemEl.innerHTML = `
+              <div class="timeline-title">${item.position || item.organization || ''}</div>
+              <div class="timeline-meta">${item.company || item.period || ''}</div>
+              ${item.description ? `<div class="timeline-body">${item.description}</div>` : ''}
+            `;
+          } else if (customSection.type === 'projects') {
+            const link = window.RxResumeData.getLink(item.website);
+            itemEl.innerHTML = `
+              <div class="card-title">${item.name || ''}</div>
+              <div class="card-body">${item.description || ''}</div>
+              ${link ? `<a href="${link}" target="_blank" class="btn btn-ghost">Open</a>` : ''}
+            `;
+          } else if (customSection.type === 'education') {
+            itemEl.innerHTML = `
+              <div class="timeline-title">${item.degree || ''} • ${item.school || ''}</div>
+              <div class="timeline-meta">${item.area || ''} ${item.grade ? '• ' + item.grade : ''}</div>
+            `;
+          } else if (customSection.type === 'skills') {
+            itemEl.className += ' skill';
+            itemEl.textContent = item.name || '';
+          } else if (customSection.type === 'awards' || customSection.type === 'certifications' || customSection.type === 'publications') {
+            const link = window.RxResumeData.getLink(item.website);
+            itemEl.innerHTML = `
+              <div class="timeline-title">${link ? `<a href="${link}" target="_blank" rel="noopener">${item.title}</a>` : item.title}</div>
+              <div class="timeline-meta">${item.issuer || item.publisher || item.awarder || ''} ${item.date ? '• ' + item.date : ''}</div>
+              ${item.description ? `<div class="timeline-body">${item.description}</div>` : ''}
+            `;
+          } else if (customSection.type === 'languages') {
+            itemEl.innerHTML = `
+              <span class="language-name">${item.language || ''}</span>
+              ${item.fluency ? `<span class="language-fluency">${item.fluency}</span>` : ''}
+            `;
+          } else if (customSection.type === 'interests') {
+            itemEl.innerHTML = `
+              <div class="interest-name">${item.name || ''}</div>
+              ${item.keywords && item.keywords.length > 0 ? `<div class="interest-keywords">${item.keywords.join(', ')}</div>` : ''}
+            `;
+          } else if (customSection.type === 'references') {
+            itemEl.innerHTML = `
+              <div class="timeline-title">${item.name || ''}</div>
+              <div class="timeline-meta">${item.position || ''} ${item.phone ? '• ' + item.phone : ''}</div>
+              ${item.description ? `<div class="timeline-body">${item.description}</div>` : ''}
+            `;
+          } else if (customSection.type === 'profiles') {
+            const link = window.RxResumeData.getLink(item.website);
+            itemEl.innerHTML = `
+              ${link ? `<a href="${link}" target="_blank" rel="noopener">${item.username || item.network || ''}</a>` : (item.username || item.network || '')}
+            `;
+          } else {
+            // Default rendering for summary or cover-letter
+            itemEl.innerHTML = item.content || item.description || item.name || '';
+          }
+          
+          itemsDiv.appendChild(itemEl);
+        }
+      });
+      
+      containerDiv.appendChild(itemsDiv);
+      sectionEl.appendChild(containerDiv);
+      customSectionsContainer.appendChild(sectionEl);
+    });
+  }
 }
 
 /* Load Profile Art */

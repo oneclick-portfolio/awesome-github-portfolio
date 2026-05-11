@@ -23,6 +23,44 @@ function line(num, code) {
   return `<div class="vsc-line"><span class="vsc-line-num">${num}</span><span class="vsc-line-code">${code}</span></div>`;
 }
 
+/* ─── Section Visibility Management ────────────────────────────────────────── */
+function updateNavigationLinks() {
+  if (!resume) return;
+
+  // Map: tabId → data check
+  const tabChecks = {
+    experience: () =>
+      window.RxResumeData.getItems(resume, 'experience').length > 0 ||
+      window.RxResumeData.getItems(resume, 'volunteer').length > 0,
+    projects: () => window.RxResumeData.getItems(resume, 'projects').length > 0,
+    skills: () =>
+      window.RxResumeData.getItems(resume, 'skills').length > 0 ||
+      window.RxResumeData.getItems(resume, 'languages').length > 0 ||
+      window.RxResumeData.getItems(resume, 'education').length > 0,
+    contact: () => true, // always show contact
+    about_me: () => true, // always show about_me
+  };
+
+  Object.entries(tabChecks).forEach(([tabId, check]) => {
+    const visible = check();
+    // Toggle tabs
+    $$('.vsc-tab').forEach(t => {
+      if (t.dataset.tab === tabId) t.hidden = !visible;
+    });
+    // Toggle tree items
+    $$('.vsc-tree-item').forEach(t => {
+      if (t.dataset.tab === tabId) t.hidden = !visible;
+    });
+    // If current active tab is now hidden, switch to about_me
+    if (!visible) {
+      const activeTab = document.querySelector('.vsc-tab.active');
+      if (activeTab && activeTab.dataset.tab === tabId) {
+        switchTab('about_me');
+      }
+    }
+  });
+}
+
 async function loadResumeData() {
   try {
     resume = await window.RxResumeData.loadResume(CONFIG.paths.resumeData);
@@ -30,6 +68,7 @@ async function loadResumeData() {
     renderAllPanels();
     loadProfileArt();
     attachEditorInteractions();
+    updateNavigationLinks();
   } catch (error) {
     console.error('Error loading resume data:', error);
     $('#panel-about_me').innerHTML = '<div style="padding:2rem;color:#f38ba8;">Error loading resume data. Check resume/Reactive Resume.json.</div>';
@@ -115,6 +154,27 @@ function renderExperience() {
     if (idx < items.length - 1) html += line(n++, '');
   });
 
+  // Volunteer
+  const volunteer = window.RxResumeData.getItems(resume, 'volunteer');
+  if (volunteer.length) {
+    html += line(n++, '');
+    html += line(n++, `<span class="syn-comment"># Volunteer</span>`);
+    html += line(n++, '');
+    volunteer.forEach((vol, idx) => {
+      html += line(n++, `<span class="syn-tag">- organization</span>: <span class="syn-str">"${esc(vol.organization || '')}"</span>`);
+      html += line(n++, `  <span class="syn-tag">position</span>: <span class="syn-str">"${esc(vol.position || '')}"</span>`);
+      if (vol.period) html += line(n++, `  <span class="syn-tag">period</span>: <span class="syn-str">"${esc(vol.period)}"</span>`);
+      if (vol.location) html += line(n++, `  <span class="syn-tag">location</span>: <span class="syn-str">"${esc(vol.location)}"</span>`);
+      const desc = stripHtml(vol.description || '').trim();
+      if (desc) {
+        const descLines = wrapText(desc, 70);
+        html += line(n++, `  <span class="syn-tag">summary</span>: |`);
+        descLines.forEach(l => { html += line(n++, `    <span class="syn-str">${esc(l)}</span>`); });
+      }
+      if (idx < volunteer.length - 1) html += line(n++, '');
+    });
+  }
+
   $('#panel-experience').innerHTML = html;
 }
 
@@ -183,6 +243,83 @@ function renderSkills() {
     });
   }
 
+  // Interests
+  const interests = window.RxResumeData.getItems(resume, 'interests');
+  if (interests.length) {
+    html += line(n++, '');
+    html += line(n++, `<span class="syn-section">[interests]</span>`);
+    interests.forEach(interest => {
+      const keywords = interest.keywords && interest.keywords.length ? interest.keywords.join(', ') : '';
+      html += line(n++, `<span class="syn-attr">${esc((interest.name || '').replace(/[\s\/]/g, '_').toLowerCase())}</span> = <span class="syn-str">"${esc(keywords || interest.name || '')}"</span>`);
+    });
+  }
+
+  // Awards
+  const awards = window.RxResumeData.getItems(resume, 'awards');
+  if (awards.length) {
+    html += line(n++, '');
+    html += line(n++, `<span class="syn-section">[awards]</span>`);
+    awards.forEach(award => {
+      html += line(n++, '');
+      html += line(n++, `<span class="syn-section">[[awards.items]]</span>`);
+      html += line(n++, `<span class="syn-attr">title</span> = <span class="syn-str">"${esc(award.title || '')}"</span>`);
+      if (award.awarder) html += line(n++, `<span class="syn-attr">awarder</span> = <span class="syn-str">"${esc(award.awarder)}"</span>`);
+      if (award.date) html += line(n++, `<span class="syn-attr">date</span> = <span class="syn-str">"${esc(award.date)}"</span>`);
+      const link = window.RxResumeData.getLink(award.website);
+      if (link) html += line(n++, `<span class="syn-attr">url</span> = <span class="syn-link">${esc(link)}</span>`);
+    });
+  }
+
+  // Certifications
+  const certifications = window.RxResumeData.getItems(resume, 'certifications');
+  if (certifications.length) {
+    html += line(n++, '');
+    html += line(n++, `<span class="syn-section">[certifications]</span>`);
+    certifications.forEach(cert => {
+      html += line(n++, '');
+      html += line(n++, `<span class="syn-section">[[certifications.items]]</span>`);
+      html += line(n++, `<span class="syn-attr">title</span> = <span class="syn-str">"${esc(cert.title || '')}"</span>`);
+      if (cert.issuer) html += line(n++, `<span class="syn-attr">issuer</span> = <span class="syn-str">"${esc(cert.issuer)}"</span>`);
+      if (cert.date) html += line(n++, `<span class="syn-attr">date</span> = <span class="syn-str">"${esc(cert.date)}"</span>`);
+      const link = window.RxResumeData.getLink(cert.website);
+      if (link) html += line(n++, `<span class="syn-attr">url</span> = <span class="syn-link">${esc(link)}</span>`);
+    });
+  }
+
+  // Publications
+  const publications = window.RxResumeData.getItems(resume, 'publications');
+  if (publications.length) {
+    html += line(n++, '');
+    html += line(n++, `<span class="syn-section">[publications]</span>`);
+    publications.forEach(pub => {
+      html += line(n++, '');
+      html += line(n++, `<span class="syn-section">[[publications.items]]</span>`);
+      html += line(n++, `<span class="syn-attr">title</span> = <span class="syn-str">"${esc(pub.title || '')}"</span>`);
+      if (pub.publisher) html += line(n++, `<span class="syn-attr">publisher</span> = <span class="syn-str">"${esc(pub.publisher)}"</span>`);
+      if (pub.date) html += line(n++, `<span class="syn-attr">date</span> = <span class="syn-str">"${esc(pub.date)}"</span>`);
+      const link = window.RxResumeData.getLink(pub.website);
+      if (link) html += line(n++, `<span class="syn-attr">url</span> = <span class="syn-link">${esc(link)}</span>`);
+    });
+  }
+
+  // Custom Sections
+  const customSects = window.RxResumeData.getCustomSections(resume);
+  customSects.forEach(customSection => {
+    const sectionKey = (customSection.title || '').replace(/[\s\/]/g, '_').toLowerCase();
+    html += line(n++, '');
+    html += line(n++, `<span class="syn-section">[${esc(sectionKey)}]</span>`);
+    (customSection.items || []).filter(i => !i.hidden).forEach(item => {
+      const name = item.name || item.title || item.organization || item.position || '';
+      const meta = item.company || item.issuer || item.publisher || item.awarder || item.school || '';
+      const period = item.date || item.period || '';
+      html += line(n++, '');
+      html += line(n++, `<span class="syn-section">[[${esc(sectionKey)}.items]]</span>`);
+      html += line(n++, `<span class="syn-attr">name</span> = <span class="syn-str">"${esc(name)}"</span>`);
+      if (meta) html += line(n++, `<span class="syn-attr">source</span> = <span class="syn-str">"${esc(meta)}"</span>`);
+      if (period) html += line(n++, `<span class="syn-attr">period</span> = <span class="syn-str">"${esc(period)}"</span>`);
+    });
+  });
+
   $('#panel-skills').innerHTML = html;
 }
 
@@ -222,10 +359,18 @@ function renderContact() {
   html += line(n++, '');
   html += line(n++, `---`);
   html += line(n++, '');
-  html += line(n++, `<span class="syn-comment">*View this portfolio in other themes:*</span>`);
-  html += line(n++, `<span class="syn-bullet">-</span> [Default](../modern/index.html)`);
-  html += line(n++, `<span class="syn-bullet">-</span> [Graphic](../graphic/index.html)`);
-  html += line(n++, `<span class="syn-bullet">-</span> [Newspaper](../newspaper/index.html)`);
+
+  // References
+  const references = window.RxResumeData.getItems(resume, 'references');
+  if (references.length) {
+    html += line(n++, '');
+    html += line(n++, `<span class="syn-heading">## References</span>`);
+    html += line(n++, '');
+    references.forEach(ref => {
+      html += line(n++, `<span class="syn-bullet">-</span> <span class="syn-bold">${esc(ref.name || '')}</span>` + (ref.position ? ` — ${esc(ref.position)}` : ''));
+      if (ref.phone) html += line(n++, `  <span class="syn-bullet"> </span> ${esc(ref.phone)}`);
+    });
+  }
 
   $('#panel-contact').innerHTML = html;
 

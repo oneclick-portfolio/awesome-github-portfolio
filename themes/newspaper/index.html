@@ -24,8 +24,11 @@
     </div>
 
     <header class="hero-header">
+      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
       <h1 class="hero-name" data-name></h1>
       <div id="headlineRoles" class="hero-roles"></div>
+      <nav class="site-nav">
+      </nav>
     </header>
 
     <main class="content-grid">
@@ -33,6 +36,7 @@
         <article>
           <img id="profileImage" class="profile-image" alt="Profile" />
           <h2 class="section-headline">A Vision for Scalable Architecture</h2>
+          <div id="summarySection"></div>
           <p id="summaryText" class="dropcap summary-text"></p>
           <div class="quick-links">
             <a id="emailLink" target="_blank" rel="noopener">Contact via Email</a>
@@ -66,15 +70,58 @@
         </div>
         <div id="projectsList" class="projects-list"></div>
 
+        <div id="profilesSection"></div>
+
         <div class="boxed-block education-block">
           <h3 class="mini-title">Editorial: Education</h3>
+          <div id="educationSection"></div>
           <p id="educationText"></p>
         </div>
 
+        <div id="skillsSection"></div>
+        <div id="languagesSection"></div>
         <div class="language-block">
           <div class="language-title">Language Edition</div>
           <div id="languagesList" class="languages-list"></div>
         </div>
+
+        <div id="interestsSection"></div>
+        <div class="boxed-block interests-block">
+          <h3 class="mini-title">Interests</h3>
+          <div id="interestsList" class="interests-list"></div>
+        </div>
+
+        <div id="awardsSection"></div>
+        <div class="boxed-block awards-block">
+          <h3 class="mini-title">Awards & Recognition</h3>
+          <div id="awardsList" class="awards-list"></div>
+        </div>
+
+        <div id="certificationsSection"></div>
+        <div class="boxed-block certifications-block">
+          <h3 class="mini-title">Certifications</h3>
+          <div id="certificationsList" class="certifications-list"></div>
+        </div>
+
+        <div id="publicationsSection"></div>
+        <div class="boxed-block publications-block">
+          <h3 class="mini-title">Publications</h3>
+          <div id="publicationsList" class="publications-list"></div>
+        </div>
+
+        <div id="volunteerSection"></div>
+        <div class="boxed-block volunteer-block">
+          <h3 class="mini-title">Volunteer Service</h3>
+          <div id="volunteerList" class="volunteer-list"></div>
+        </div>
+
+        <div id="referencesSection"></div>
+        <div class="boxed-block references-block">
+          <h3 class="mini-title">Professional References</h3>
+          <div id="referencesList" class="references-list"></div>
+        </div>
+
+        <div id="customSectionsContainer"></div>
       </section>
     </main>
 
