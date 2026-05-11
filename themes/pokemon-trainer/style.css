@@ -161,8 +161,14 @@ a { color: inherit; text-decoration: none; }
   flex-shrink: 0;
   box-shadow: var(--shadow-px);
 }
-.pb-top    { height: 13px; background: var(--white); }
-.pb-bottom { height: 13px; background: #333; }
+.pb-top {
+  height: 13px;
+  background: linear-gradient(180deg, #ff5a5a 0%, #d71f1f 55%, #b10d0d 100%);
+}
+.pb-bottom {
+  height: 13px;
+  background: linear-gradient(180deg, #ffffff 0%, #f2f2f2 65%, #d9d9d9 100%);
+}
 .pb-band {
   height: 6px;
   background: var(--black);
@@ -171,11 +177,12 @@ a { color: inherit; text-decoration: none; }
   justify-content: center;
 }
 .pb-btn {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: var(--white);
+  background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f5f5f5 45%, #d7d7d7 100%);
   border: 2px solid var(--black);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
 }
 
 .header-title {
@@ -209,18 +216,60 @@ a { color: inherit; text-decoration: none; }
 .nav-toggle:focus { outline: 2px solid var(--white); outline-offset: 2px; }
 
 .site-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
   transition: all 0.3s ease;
+}
+
+.bulletin-shell {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(70, 0, 0, 0.9), rgba(40, 0, 0, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.bulletin-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: poke-bulletin-scroll 28s linear infinite;
+}
+
+.bulletin-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.2rem 0.35rem;
+}
+
+.bulletin-shell:hover .bulletin-track,
+.bulletin-shell:focus-within .bulletin-track {
+  animation-play-state: paused;
+}
+
+@keyframes poke-bulletin-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* --- Bullet Navigation --- */
 .nav-bullet {
   font-family: 'Press Start 2P', monospace;
-  font-size: 0.5rem;
+  font-size: 0.42rem;
   color: var(--white);
   background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
   border: 2px solid rgba(255,255,255,0.5);
   border-radius: 20px;
-  padding: 0.4rem 0.8rem;
+  padding: 0.3rem 0.7rem;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -254,6 +303,7 @@ a { color: inherit; text-decoration: none; }
   border-color: var(--black);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 2px 4px rgba(0,0,0,0.3);
   border-radius: 20px;
+  flex-shrink: 0;
 }
 
 .nav-bullet--primary:hover {
@@ -943,6 +993,32 @@ a { color: inherit; text-decoration: none; }
     opacity: 1;
     overflow-y: auto;
   }
+
+    .bulletin-shell {
+      width: 100%;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .bulletin-track {
+      animation: none;
+      display: block;
+      width: 100%;
+    }
+
+    .bulletin-strip {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0;
+    }
+
+    .bulletin-strip.is-clone {
+      display: none;
+    }
 
     .nav-bullet {
     display: block;

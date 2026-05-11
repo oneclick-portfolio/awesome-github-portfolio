@@ -37,8 +37,9 @@ const mobileNav = new MobileNav();
 
 /* ─── Dynamic Navigation Updates ────────────────────────────────────────── */
 function updateNavigationLinks() {
-  const nav = document.querySelector('.site-nav');
-  if (!nav) return;
+  const track = document.getElementById('bulletinTrack');
+  const bulletinShell = document.querySelector('.bulletin-shell');
+  if (!track || !bulletinShell) return;
 
   const isVisible = (element) => {
     if (!element) return false;
@@ -73,37 +74,49 @@ function updateNavigationLinks() {
     }
   });
 
-  // Find all existing nav links (except theme toggle and email)
-  const existingLinks = nav.querySelectorAll('a');
-  const themeToggle = nav.querySelector('.theme-toggle');
-  
-  // Remove old section links (keep theme toggle and email link)
-  existingLinks.forEach(link => {
-    if (link.id !== 'emailLink' && !link.classList.contains('nav-btn')) {
-      link.remove();
-    }
-  });
-
-  // Add nav links for visible sections only
+  const visibleSections = [];
   sections.forEach((section) => {
     const container = typeof section.container === 'string' 
       ? document.querySelector(section.container)
       : section.container;
-    
-    // Only add if container exists and is visible
+
     if (isVisible(container)) {
+      visibleSections.push(section);
+    }
+  });
+
+  if (!visibleSections.length) {
+    bulletinShell.hidden = true;
+    bulletinShell.setAttribute('aria-hidden', 'true');
+    track.innerHTML = '';
+    return;
+  }
+
+  bulletinShell.hidden = false;
+  bulletinShell.removeAttribute('aria-hidden');
+
+  const createStrip = () => {
+    const strip = document.createElement('div');
+    strip.className = 'bulletin-strip';
+
+    visibleSections.forEach((section) => {
       const link = document.createElement('a');
       link.href = section.href;
       link.textContent = section.label;
-       link.className = 'nav-bullet';
-      // Insert before theme toggle (or at end if no toggle)
-      if (themeToggle) {
-        nav.insertBefore(link, themeToggle);
-      } else {
-        nav.insertBefore(link, nav.lastChild);
-      }
-    }
-  });
+      link.className = 'nav-bullet';
+      strip.appendChild(link);
+    });
+
+    return strip;
+  };
+
+  track.innerHTML = '';
+  track.appendChild(createStrip());
+
+  const clone = createStrip();
+  clone.classList.add('is-clone');
+  clone.setAttribute('aria-hidden', 'true');
+  track.appendChild(clone);
 }
 
 async function loadResumeData() {
