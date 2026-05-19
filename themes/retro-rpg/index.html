@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111827" />
+  <title>Retro RPG Portfolio</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="container nav-bar">
+        <a class="brand" href="#top" aria-label="Jump to top">
+          <span class="brand-copy">
+            <span class="brand-label">Retro RPG</span>
+            <span class="brand-name" data-name></span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Theme">
+          <div class="theme-toggle" role="radiogroup" aria-label="Color theme">
+            <button class="theme-opt" data-theme="dark" aria-label="Dark theme" title="Dark">D</button>
+            <button class="theme-opt is-active" data-theme="system" aria-label="System theme" title="System">S</button>
+            <button class="theme-opt" data-theme="light" aria-label="Light theme" title="Light">L</button>
+          </div>
+          <a id="emailLink" class="nav-cta" target="_blank" rel="noopener">Email</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="main-shell">
+      <!-- Tab: Hero / Profile -->
+      <section class="tab-panel is-active" data-tab="hero">
+        <div id="summarySection"></div>
+        <section class="hero-section">
+          <div class="container hero-grid">
+            <div class="hero-copy">
+              <p class="eyebrow">&gt; QUEST_LOG.init()</p>
+              <h1 class="hero-title">
+                Forging software adventures through
+                <span class="hero-accent">code &amp; craft</span>
+              </h1>
+              <p class="hero-headline" data-headline></p>
+              <div class="hero-summary" id="summaryText"></div>
+              <div class="hero-actions">
+                <a id="githubLink" class="button button-primary" target="_blank" rel="noopener">GitHub</a>
+                <a id="linkedinLink" class="button button-secondary" target="_blank" rel="noopener">LinkedIn</a>
+              </div>
+              <div class="hero-meta">
+                <div class="meta-card">
+                  <span class="meta-label">Guild Hall</span>
+                  <strong id="heroLocation"></strong>
+                </div>
+                <div class="meta-card">
+                  <span class="meta-label">Active Quests</span>
+                  <strong id="projectCount">0 quests</strong>
+                </div>
+                <div class="meta-card">
+                  <span class="meta-label">XP Records</span>
+                  <strong id="experienceCount">0 roles</strong>
+                </div>
+              </div>
+            </div>
+
+            <aside class="hero-panel">
+              <div class="portrait-card">
+                <div class="portrait-frame" id="profileArt"></div>
+              </div>
+              <div class="signal-card">
+                <div class="signal-card-head">
+                  <span class="signal-dot"></span>
+                  <span>Character Sheet</span>
+                </div>
+                <div class="signal-name" data-name></div>
+                <div class="signal-lines">
+                  <span data-headline></span>
+                  <span id="signalWebsite"></span>
+                  <span id="signalEmail"></span>
+                </div>
+                <div id="profilesSection"></div>
+                <div class="profile-list" id="profilesGrid"></div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="strip-section">
+          <div class="container strip-grid">
+            <article class="strip-card">
+              <span class="strip-label">Class</span>
+              <strong id="footerHeadline"></strong>
+            </article>
+            <article class="strip-card">
+              <span class="strip-label">Region</span>
+              <strong id="footerLocation"></strong>
+            </article>
+            <article class="strip-card">
+              <span class="strip-label">Party Links</span>
+              <div class="inline-links">
+                <a id="footerGithub" target="_blank" rel="noopener">[GitHub]</a>
+                <a id="footerLinkedin" target="_blank" rel="noopener">[LinkedIn]</a>
+                <a id="footerEmail" target="_blank" rel="noopener">[Email]</a>
+              </div>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <!-- Tab: Experience & Projects -->
+      <section class="tab-panel" data-tab="quest">
+        <div id="experienceSection"></div>
+        <section id="experience" class="content-section">
+          <div class="container section-grid">
+            <div class="section-intro">
+              <p class="section-kicker">Experience</p>
+              <h2>Campaign History &amp; Major Milestones</h2>
+            </div>
+            <div class="section-body timeline" id="experienceList"></div>
+          </div>
+        </section>
+
+        <div id="projectsSection"></div>
+        <section id="projects" class="content-section alt-surface">
+          <div class="container section-grid">
+            <div class="section-intro">
+              <p class="section-kicker">Projects</p>
+              <h2>Quest Board: Shipped Builds &amp; Experiments</h2>
+            </div>
+            <div class="section-body project-grid" id="projectsGrid"></div>
+          </div>
+        </section>
+      </section>
+
+      <!-- Tab: Skills & Education -->
+      <section class="tab-panel" data-tab="craft">
+        <section id="craft" class="content-section">
+          <div class="container craft-grid">
+            <div id="skillsSection"></div>
+            <section class="craft-panel" id="skills-section">
+              <div class="panel-head">
+                <p class="section-kicker">Skills</p>
+                <h2>Abilities &amp; Proficiency Stats</h2>
+              </div>
+              <div class="skills-cloud" id="skillsCloud"></div>
+            </section>
+
+            <div id="educationSection"></div>
+            <section class="craft-panel" id="education-section" style="grid-row: span 2;">
+              <div class="panel-head">
+                <p class="section-kicker">Education</p>
+                <h2>Academy &amp; Training Records</h2>
+              </div>
+              <div class="education-list" id="educationList"></div>
+            </section>
+
+            <div id="languagesSection"></div>
+            <section class="craft-panel" id="languages-section">
+              <div class="panel-head">
+                <p class="section-kicker">Languages</p>
+                <h2>Tongues &amp; Fluency Levels</h2>
+              </div>
+              <div class="language-list" id="languagesList"></div>
+            </section>
+
+            <div id="interestsSection"></div>
+            <section class="craft-panel craft-panel-wide" id="interests-section">
+              <div class="panel-head">
+                <p class="section-kicker">Interests</p>
+                <h2>Passions &amp; Side Quests</h2>
+              </div>
+              <div class="interests-list" id="interestsList"></div>
+            </section>
+          </div>
+        </section>
+      </section>
+
+      <!-- Tab: Achievements & Certs -->
+      <section class="tab-panel" data-tab="achieve">
+        <section id="craft-wide" class="content-section">
+          <div class="container craft-grid">
+            <div id="awardsSection"></div>
+            <section class="craft-panel craft-panel-wide" id="awards-section">
+              <div class="panel-head">
+                <p class="section-kicker">Awards</p>
+                <h2>Achievement Unlocked</h2>
+              </div>
+              <div class="awards-list" id="awardsList"></div>
+            </section>
+
+            <div id="certificationsSection"></div>
+            <section class="craft-panel craft-panel-wide" id="certifications-section">
+              <div class="panel-head">
+                <p class="section-kicker">Certifications</p>
+                <h2>Credentials &amp; Badges</h2>
+              </div>
+              <div class="certifications-list" id="certificationsList"></div>
+            </section>
+
+            <div id="publicationsSection"></div>
+            <section class="craft-panel craft-panel-wide" id="publications-section">
+              <div class="panel-head">
+                <p class="section-kicker">Publications</p>
+                <h2>BBS Logs &amp; Published Works</h2>
+              </div>
+              <div class="publications-list" id="publicationsList"></div>
+            </section>
+          </div>
+        </section>
+      </section>
+
+      <!-- Tab: Community -->
+      <section class="tab-panel" data-tab="community">
+        <section id="craft-community" class="content-section">
+          <div class="container craft-grid">
+            <div id="volunteerSection"></div>
+            <section class="craft-panel craft-panel-wide" id="volunteer-section">
+              <div class="panel-head">
+                <p class="section-kicker">Volunteer</p>
+                <h2>Community Guild Service</h2>
+              </div>
+              <div class="volunteer-list" id="volunteerList"></div>
+            </section>
+
+            <div id="referencesSection"></div>
+            <section class="craft-panel craft-panel-wide" id="references-section">
+              <div class="panel-head">
+                <p class="section-kicker">References</p>
+                <h2>Incoming Messages</h2>
+              </div>
+              <div class="references-list" id="referencesList"></div>
+            </section>
+
+            <div id="customSectionsContainer"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="tab-bar" aria-label="Main navigation">
+      <button class="tab-btn is-active" data-target="hero" aria-label="Hero">
+        <span class="tab-icon">🏠</span>
+        <span class="tab-label">Home</span>
+      </button>
+      <button class="tab-btn" data-target="quest" aria-label="Quest Log">
+        <span class="tab-icon">📜</span>
+        <span class="tab-label">Quests</span>
+      </button>
+      <button class="tab-btn" data-target="craft" aria-label="Craft">
+        <span class="tab-icon">⚔️</span>
+        <span class="tab-label">Craft</span>
+      </button>
+      <button class="tab-btn" data-target="achieve" aria-label="Achievements">
+        <span class="tab-icon">🏆</span>
+        <span class="tab-label">Achieve</span>
+      </button>
+      <button class="tab-btn" data-target="community" aria-label="Community">
+        <span class="tab-icon">👥</span>
+        <span class="tab-label">Community</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="../../config.js"></script>
+  <script src="../../src/rxresume.js"></script>
+  <script src="./icons.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

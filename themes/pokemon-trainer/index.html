@@ -12,185 +12,137 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./style.css" />
 </head>
-<body class="pokemon-theme">
-  <!-- Pokédex top bar -->
-  <header class="pokedex-header">
-    <div class="header-inner">
-      <div class="header-left">
-        <div class="pokeball-logo" aria-hidden="true">
-          <div class="pb-top"></div>
-          <div class="pb-band"><div class="pb-btn"></div></div>
-          <div class="pb-bottom"></div>
-        </div>
-        <span class="header-title pixel" data-name></span>
+<body>
+  <div class="pokedex-device">
+    <!-- Left Panel -->
+    <div class="pokedex-left-panel">
+      <div class="left-top-decor">
+        <div class="led led--big"></div>
+        <div class="led led--sm led--red"></div>
+        <div class="led led--sm led--yellow"></div>
+        <div class="led led--sm led--green"></div>
       </div>
-      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
-      <nav class="header-nav site-nav">
-        <div class="bulletin-shell" aria-label="Section bulletin">
-          <div class="bulletin-track" id="bulletinTrack"></div>
+      <div class="left-screen">
+        <div class="left-screen__inner">
+          <div class="portrait-frame" id="profileArt">
+            <div class="portrait-placeholder pixel">??</div>
+          </div>
+          <div class="trainer-info">
+            <div class="info-row">
+              <span class="info-label pixel">NAME</span>
+              <span class="info-value pixel" data-name></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label pixel">CLASS</span>
+              <span class="info-value pixel" data-headline></span>
+            </div>
+          </div>
+          <div class="trainer-stats">
+            <div class="stat-line"><span class="pixel">HP</span><span class="stat-bar"><i style="width:92%"></i></span></div>
+            <div class="stat-line"><span class="pixel">ATK</span><span class="stat-bar"><i style="width:78%"></i></span></div>
+            <div class="stat-line"><span class="pixel">DEF</span><span class="stat-bar"><i style="width:85%"></i></span></div>
+            <div class="stat-line"><span class="pixel">SPD</span><span class="stat-bar"><i style="width:70%"></i></span></div>
+          </div>
+          <div class="trainer-links">
+            <a id="githubLink" class="dex-link pixel" target="_blank" rel="noopener">GitHub</a>
+            <a id="linkedinLink" class="dex-link pixel" target="_blank" rel="noopener">LinkedIn</a>
+            <a id="emailLink" class="dex-link pixel" target="_blank" rel="noopener">Email</a>
+          </div>
         </div>
-        <a id="emailLink" class="nav-bullet nav-bullet--primary" target="_blank" rel="noopener">CONTACT</a>
-      </nav>
+      </div>
+      <div class="left-bottom-decor">
+        <div class="speaker-grille">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
     </div>
-  </header>
 
-  <main class="theme-shell">
-    <!-- Trainer Card Hero -->
-    <section class="trainer-card-section">
-      <div class="trainer-card">
-        <div class="trainer-card__badge pixel">TRAINER CARD</div>
-        <div class="trainer-card__body">
-          <div class="trainer-card__info">
-            <div class="tc-row">
-              <span class="tc-label pixel">NAME</span>
-              <span class="tc-value pixel" data-name></span>
-            </div>
-            <div class="tc-row">
-              <span class="tc-label pixel">CLASS</span>
-              <span class="tc-value pixel" data-headline></span>
-            </div>
-            <div class="tc-row tc-row--summary">
-              <p class="tc-summary" id="summaryText"></p>
-            </div>
-            <div class="tc-links">
-              <a id="githubLink" class="poke-btn" target="_blank" rel="noopener">
-                <span class="pixel">GitHub</span>
-              </a>
-              <a id="linkedinLink" class="poke-btn" target="_blank" rel="noopener">
-                <span class="pixel">LinkedIn</span>
-              </a>
-            </div>
-          </div>
-          <div class="trainer-card__portrait">
-            <div class="portrait-frame" id="profileArt">
-              <div class="portrait-placeholder pixel">??</div>
-            </div>
-            <div class="trainer-hud">
-              <div class="hud-line"><span class="pixel">HP</span><span class="hud-bar"><i></i></span></div>
-              <div class="hud-line"><span class="pixel">ATK</span><span class="hud-bar"><i></i></span></div>
-              <div class="hud-line"><span class="pixel">SPD</span><span class="hud-bar"><i></i></span></div>
-            </div>
-            <div class="trainer-id pixel">ID: 001</div>
-          </div>
+    <!-- Hinge -->
+    <div class="pokedex-hinge"></div>
+
+    <!-- Right Panel -->
+    <div class="pokedex-right-panel">
+      <div class="right-screen">
+        <div class="right-screen__header pixel">
+          <span class="page-title" id="pageTitle">TRAINER</span>
+          <span class="page-num" id="pageNum">1/6</span>
         </div>
-      </div>
-    </section>
+        <div class="right-screen__content" id="screenContent">
+          <!-- Page: Trainer -->
+          <div class="dex-page is-active" data-page="trainer">
+            <p class="trainer-summary" id="summaryText"></p>
+            <div class="trainer-id pixel">ID No. 001</div>
+          </div>
 
-    <!-- Experience = Battle Record -->
-    <section id="experience" class="poke-section">
-      <div class="container">
-        <h2 class="section-title pixel">BATTLE RECORD</h2>
-        <div id="experienceList" class="battle-list"></div>
-      </div>
-    </section>
+          <!-- Page: Battle Log -->
+          <div class="dex-page" data-page="battle">
+            <h2 class="page-section-title pixel">BATTLE RECORD</h2>
+            <div id="experienceList" class="dex-entries"></div>
+          </div>
 
-    <!-- Projects = Item Bag -->
-    <section id="projects" class="poke-section poke-section--alt">
-      <div class="container">
-        <h2 class="section-title pixel">ITEM BAG</h2>
-        <div id="projectsGrid" class="item-grid"></div>
-      </div>
-    </section>
+          <!-- Page: Item Bag -->
+          <div class="dex-page" data-page="bag">
+            <h2 class="page-section-title pixel">ITEM BAG</h2>
+            <div id="projectsGrid" class="dex-entries"></div>
+          </div>
 
-    <!-- Education -->
-    <section id="education" class="poke-section">
-      <div class="container">
-        <h2 class="section-title pixel">POKEDEX ENTRIES</h2>
-        <div id="educationList" class="dex-list"></div>
-      </div>
-    </section>
+          <!-- Page: Pokédex -->
+          <div class="dex-page" data-page="pokedex">
+            <h2 class="page-section-title pixel">POKEDEX ENTRIES</h2>
+            <div id="educationList" class="dex-entries"></div>
+            <div id="certificationsWrap">
+              <h3 class="page-section-title pixel">CERTIFIED MOVES</h3>
+              <div id="certificationsList" class="dex-entries"></div>
+            </div>
+            <div id="publicationsWrap">
+              <h3 class="page-section-title pixel">FIELD NOTES</h3>
+              <div id="publicationsList" class="dex-entries"></div>
+            </div>
+          </div>
 
-    <!-- Skills = Moves -->
-    <section id="skills" class="poke-section poke-section--alt">
-      <div class="container">
-        <h2 class="section-title pixel">MOVE SET</h2>
-        <div class="skills-board">
-          <section class="badge-vault">
-            <h3 class="badge-title pixel">GYM BADGES</h3>
-            <div id="badgesGrid" class="badges-grid"></div>
-          </section>
-          <section class="moves-vault">
-            <h3 class="badge-title pixel">SKILLS (HP)</h3>
+          <!-- Page: Moves -->
+          <div class="dex-page" data-page="moves">
+            <h2 class="page-section-title pixel">MOVE SET</h2>
             <div id="skillsCloud" class="moves-grid"></div>
-          </section>
+            <div id="languagesWrap">
+              <h3 class="page-section-title pixel">LANGUAGES</h3>
+              <div id="languagesList" class="dex-entries"></div>
+            </div>
+          </div>
+
+          <!-- Page: Guild -->
+          <div class="dex-page" data-page="guild">
+            <div id="awardsWrap">
+              <h2 class="page-section-title pixel">HALL OF FAME</h2>
+              <div id="awardsList" class="dex-entries"></div>
+            </div>
+            <div id="volunteerWrap">
+              <h3 class="page-section-title pixel">GUILD QUESTS</h3>
+              <div id="volunteerList" class="dex-entries"></div>
+            </div>
+            <div id="interestsWrap">
+              <h3 class="page-section-title pixel">INTERESTS</h3>
+              <div id="interestsList" class="moves-grid"></div>
+            </div>
+            <div id="referencesWrap">
+              <h3 class="page-section-title pixel">ALLIES</h3>
+              <div id="referencesList" class="dex-entries"></div>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
 
-    <!-- Languages -->
-    <section id="languages" class="poke-section">
-      <div class="container">
-        <h2 class="section-title pixel">LANGUAGES</h2>
-        <div id="languagesList" class="lang-list"></div>
-      </div>
-    </section>
-
-    <!-- Interests = Passions -->
-    <section id="interests" class="poke-section poke-section--alt">
-      <div class="container">
-        <h2 class="section-title pixel">INTERESTS</h2>
-        <div id="interestsList" class="moves-grid"></div>
-      </div>
-    </section>
-
-    <!-- Awards = Hall of Fame -->
-    <section id="awards" class="poke-section">
-      <div class="container">
-        <h2 class="section-title pixel">HALL OF FAME</h2>
-        <div id="awardsList" class="battle-list"></div>
-      </div>
-    </section>
-
-    <!-- Certifications = Certified Moves -->
-    <section id="certifications" class="poke-section poke-section--alt">
-      <div class="container">
-        <h2 class="section-title pixel">CERTIFIED MOVES</h2>
-        <div id="certificationsList" class="battle-list"></div>
-      </div>
-    </section>
-
-    <!-- Publications = Field Notes -->
-    <section id="publications" class="poke-section">
-      <div class="container">
-        <h2 class="section-title pixel">FIELD NOTES</h2>
-        <div id="publicationsList" class="battle-list"></div>
-      </div>
-    </section>
-
-    <!-- Volunteer = Guild Quests -->
-    <section id="volunteer" class="poke-section poke-section--alt">
-      <div class="container">
-        <h2 class="section-title pixel">GUILD QUESTS</h2>
-        <div id="volunteerList" class="battle-list"></div>
-      </div>
-    </section>
-
-    <!-- References = Allies -->
-    <section id="references" class="poke-section">
-      <div class="container">
-        <h2 class="section-title pixel">ALLIES</h2>
-        <div id="referencesList" class="lang-list"></div>
-      </div>
-    </section>
-
-    <!-- Custom Sections -->
-    <div id="customSectionsContainer"></div>
-  </main>
-
-  <footer class="poke-footer">
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <span class="pixel footer-name" id="footerHeadline"></span>
-        <span class="footer-loc" id="footerLocation"></span>
-      </div>
-      <div class="footer-links">
-        <a id="footerGithub" target="_blank" rel="noopener">GitHub</a>
-        <a id="footerLinkedin" target="_blank" rel="noopener">LinkedIn</a>
-        <a id="footerEmail" target="_blank" rel="noopener">Email</a>
-        <a href="/index.html">Themes</a>
+      <!-- Controls -->
+      <div class="pokedex-controls">
+        <button class="dpad-btn dpad-btn--left" id="btnPrev" aria-label="Previous page">&#9664;</button>
+        <div class="page-dots" id="pageDots"></div>
+        <button class="dpad-btn dpad-btn--right" id="btnNext" aria-label="Next page">&#9654;</button>
       </div>
     </div>
-  </footer>
+  </div>
+
+  <!-- Custom Sections (appended dynamically) -->
+  <div id="customSectionsContainer" hidden></div>
 
   <script src="../../config.js"></script>
   <script src="../../src/rxresume.js"></script>
