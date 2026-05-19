@@ -156,7 +156,6 @@ Implementation checklist:
    - Use `element.hidden = true/false` (not CSS classes) for all show/hide link logic
 8. Reuse the repository's resume-loading and DOM-population patterns instead of inventing a new data contract.
 9. Implement per-section visibility guards for all 12 sections + customSections so empty sections are fully hidden, not just left blank.
-9. Reference [SECTION_IMPLEMENTATION_SUMMARY.md](../../SECTION_IMPLEMENTATION_SUMMARY.md) for implementation patterns for all 12 sections and customSections rendering.
 10. **Implement spacing standardization** (style.css):
     - Hero: `padding: 48px 0 40px;`
     - Strip: `padding: 40px 0;`
@@ -169,33 +168,3 @@ Implementation checklist:
     - Test at 320px, 480px, 720px, 1024px breakpoints
 12. Add only the HTML structure, JavaScript behavior, and CSS needed for the requested design.
 13. Validate the changed files for obvious syntax or runtime issues after editing.
-
-Output expectations:
-- Implement the files directly.
-- Briefly summarize what was created.
-- Call out any assumptions you had to make about the design brief.
-- Confirm that all 12 standard sections + customSections are implemented with visibility guards.
-- List which section guards were added (interests, awards, certifications, publications, volunteer, references, customSections, etc.).
-- **Confirm UX Architecture Standards Implementation**:
-  - CSS design system with 50+ semantic variables for colors, spacing, typography, borders
-  - MobileNav class with hamburger menu for responsive navigation
-  - Dynamic navigation link generation via updateNavigationLinks() function with 13 standard + custom sections
-  - Horizontally scrollable nav with smooth scroll behavior when content overflows
-  - Section spacing standardization (hero/strip/content)
-  - Mobile optimization with media query at 720px
-- Mention any follow-up needed if the user wants the new theme added to a selector, index, or docs.
-
-Validation checklist (verify before completing):
-- [ ] CSS custom properties are comprehensive and organized
-- [ ] Hamburger menu appears on mobile and functions correctly
-- [ ] Navigation shows all available sections dynamically (13 standard + custom, no "Craft" duplicate)
-- [ ] Navigation href values point to correct scroll targets (not anchor div IDs)
-- [ ] Anchor divs (`#skillsSection`, `#educationSection`, etc.) present in HTML before grid-embedded panels
-- [ ] Anchor divs use `display: contents` in CSS so they don't create phantom grid rows/cells
-- [ ] Links hidden via `element.hidden = true` (not opacity/CSS class)
-- [ ] All 12 sections + customSections have visibility guards (no empty containers)
-- [ ] Section spacing is consistent throughout (hero/strip/content/custom)
-- [ ] Header stays sticky while scrolling without overlapping content
-- [ ] Mobile layout is responsive and touch-friendly at ≤720px
-- [ ] No console errors or warnings
-- [ ] Resume data loads and renders correctly

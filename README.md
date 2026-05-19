@@ -13,10 +13,15 @@ This project renders the same resume content across multiple handcrafted front-e
 
 ## Included Themes
 
-- `themes/fun-graphic` - bold visual portfolio layout
+- `themes/amazon` - Amazon-inspired storefront portfolio layout
+- `themes/fun-graphic` - bold visual portfolio layout with theme switching
 - `themes/graphic` - poster-style editorial layout
 - `themes/modern` - modern landing-page portfolio
 - `themes/newspaper` - newspaper / gazette-inspired portfolio
+- `themes/pokemon-trainer` - Pokémon-themed portfolio layout
+- `themes/retro-rpg` - retro RPG-style portfolio with theme switching
+- `themes/scrapbook` - scrapbook-style portfolio with semantic design system
+- `themes/scrapbook-neon` - neon-themed scrapbook portfolio
 - `themes/vscode` - VS Code-inspired developer profile
 
 ## How It Works
@@ -34,21 +39,31 @@ Shared helpers in `src/rxresume.js` normalize resume data access, including prof
 
 ```text
 .
-├── config.js
-├── Makefile
+├── config.js                  # Global configuration
+├── Makefile                   # Development commands
 ├── README.md
 ├── resume/
-│   └── Reactive Resume.json
+│   └── Reactive Resume.json   # Single source of truth for portfolio data
 ├── src/
-│   └── rxresume.js
-└── themes/
-	├── fun-graphic/
-	├── graphic/
-	├── modern/
-	├── newspaper/
-	└── vscode/
-    ...
+│   └── rxresume.js            # Shared resume data utilities
+└── themes/                    # All portfolio themes
+    ├── amazon/
+    ├── fun-graphic/
+    ├── graphic/
+    ├── modern/
+    ├── newspaper/
+    ├── pokemon-trainer/
+    ├── retro-rpg/
+    ├── scrapbook/
+    ├── scrapbook-neon/
+    └── vscode/
 ```
+
+Each theme folder contains:
+- `index.html` - Theme layout structure
+- `app.js` - Theme-specific logic and data rendering
+- `style.css` - Theme styles and design tokens
+- `assets/` (optional) - Images, fonts, or theme-specific resources
 
 ## Requirements
 
@@ -98,7 +113,31 @@ When creating or updating a theme:
 - keep shared data access in `src/rxresume.js`
 - keep theme-specific layout and styling inside that theme folder
 - avoid hardcoding resume content inside HTML
-- prefer consuming content through `window.RxResumeData`
+
+## Recent Enhancements
+
+Recent theme updates have added modern UX features and accessibility improvements across themes:
+
+### Design Systems & Styling
+- **Semantic CSS Variables**: Color palettes, typography scales, spacing, borders, and shadows
+- **Mobile Responsiveness**: Comprehensive @media queries (≤720px breakpoint with hamburger menu)
+- **Smooth Transitions**: CSS transitions for theme switching and interactive elements
+
+### Mobile Navigation
+- **Hamburger Menu**: Visible at ≤720px with aria-expanded for accessibility
+- **Slide-Down Animation**: Navigation menu collapses/expands smoothly
+- **Auto-Close**: Navigation closes when a section link is clicked
+- **Touch-Friendly Sizing**: Min 44x44px button sizes for mobile usability
+
+### Dynamic Navigation
+- **Section-Based Links**: Navigation links automatically generated from portfolio sections
+- **Custom Sections**: Support for user-defined sections via #customSectionsContainer
+- **Visibility Guards**: Sections only appear in navigation if they contain content
+
+### Accessibility
+- **ARIA Labels**: Interactive elements include aria-label and aria-expanded attributes
+- **Semantic HTML**: Proper heading hierarchy and navigation structure
+- **Keyboard Navigation**: Full keyboard support for theme switching and menus
 
 ## Profile Image Behavior
 

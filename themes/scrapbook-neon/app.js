@@ -27,7 +27,7 @@ class MobileNav {
     this._toggle = document.querySelector('.nav-toggle');
     this._nav = document.querySelector('.topnav');
     if (!this._toggle || !this._nav) return;
-    
+
     this._toggle.addEventListener('click', () => this._handleToggle());
     this._nav.addEventListener('click', (e) => {
       if (e.target.tagName === 'A') this._close();
@@ -117,6 +117,8 @@ function updateNavigationLinks() {
       }
     }
   });
+
+  updateNavigationLinks();
 }
 
 // Build individual letter boxes for the name row
@@ -381,144 +383,7 @@ function initializePage() {
   updateNavigationLinks();
 }
 
-  // Languages
-  const languagesList = $('#languagesList');
-  const langItems = window.RxResumeData.getItems(resume, 'languages');
-  if (!langItems.length) { const s = document.getElementById('languages'); if (s) s.hidden = true; }
-  langItems.forEach((lang) => {
-    const tag = document.createElement('span');
-    tag.className = 'skill-tag';
-    tag.textContent = `${lang.language}${lang.fluency ? ` · ${lang.fluency}` : ''}`;
-    languagesList?.appendChild(tag);
-  });
-
-  // Interests
-  const interestsList = $('#interestsList');
-  const interestItems = window.RxResumeData.getItems(resume, 'interests');
-  if (!interestItems.length) { const s = document.getElementById('interests'); if (s) s.hidden = true; }
-  interestItems.forEach((interest) => {
-    const tag = document.createElement('span');
-    tag.className = 'skill-tag';
-    tag.textContent = interest.name || '';
-    if (interest.keywords && interest.keywords.length) {
-      tag.title = interest.keywords.join(', ');
-    }
-    interestsList?.appendChild(tag);
-  });
-
-  // Awards
-  const awardsList = $('#awardsList');
-  const awardItems = window.RxResumeData.getItems(resume, 'awards');
-  if (!awardItems.length) { const s = document.getElementById('awards'); if (s) s.hidden = true; }
-  awardItems.forEach((award, index) => {
-    const article = document.createElement('article');
-    article.className = cardClass(index);
-    const link = window.RxResumeData.getLink(award.website);
-    article.innerHTML = `
-      <h3>${link ? `<a class="zlink" href="${esc(link)}" target="_blank" rel="noopener">${esc(award.title || '')}</a>` : esc(award.title || '')}</h3>
-      <p class="zmeta">${esc(award.awarder || '')}${award.date ? ` · ${esc(award.date)}` : ''}</p>
-      ${award.description ? `<div class="zbody">${award.description}</div>` : ''}
-    `;
-    awardsList?.appendChild(article);
-  });
-
-  // Certifications
-  const certificationsList = $('#certificationsList');
-  const certItems = window.RxResumeData.getItems(resume, 'certifications');
-  if (!certItems.length) { const s = document.getElementById('certifications'); if (s) s.hidden = true; }
-  certItems.forEach((cert, index) => {
-    const article = document.createElement('article');
-    article.className = cardClass(index + 1);
-    const link = window.RxResumeData.getLink(cert.website);
-    article.innerHTML = `
-      <h3>${link ? `<a class="zlink" href="${esc(link)}" target="_blank" rel="noopener">${esc(cert.title || '')}</a>` : esc(cert.title || '')}</h3>
-      <p class="zmeta">${esc(cert.issuer || '')}${cert.date ? ` · ${esc(cert.date)}` : ''}</p>
-      ${cert.description ? `<div class="zbody">${cert.description}</div>` : ''}
-    `;
-    certificationsList?.appendChild(article);
-  });
-
-  // Publications
-  const publicationsList = $('#publicationsList');
-  const pubItems = window.RxResumeData.getItems(resume, 'publications');
-  if (!pubItems.length) { const s = document.getElementById('publications'); if (s) s.hidden = true; }
-  pubItems.forEach((pub, index) => {
-    const article = document.createElement('article');
-    article.className = cardClass(index + 2);
-    const link = window.RxResumeData.getLink(pub.website);
-    article.innerHTML = `
-      <h3>${link ? `<a class="zlink" href="${esc(link)}" target="_blank" rel="noopener">${esc(pub.title || '')}</a>` : esc(pub.title || '')}</h3>
-      <p class="zmeta">${esc(pub.publisher || '')}${pub.date ? ` · ${esc(pub.date)}` : ''}</p>
-      ${pub.description ? `<div class="zbody">${pub.description}</div>` : ''}
-    `;
-    publicationsList?.appendChild(article);
-  });
-
-  // Volunteer
-  const volunteerList = $('#volunteerList');
-  const volItems = window.RxResumeData.getItems(resume, 'volunteer');
-  if (!volItems.length) { const s = document.getElementById('volunteer'); if (s) s.hidden = true; }
-  volItems.forEach((vol, index) => {
-    const article = document.createElement('article');
-    article.className = cardClass(index);
-    article.innerHTML = `
-      <h3>${esc(vol.organization || '')}</h3>
-      <p class="zmeta">${esc(vol.position || '')}${vol.period ? ` · ${esc(vol.period)}` : ''}${vol.location ? ` · ${esc(vol.location)}` : ''}</p>
-      ${vol.description ? `<div class="zbody">${vol.description}</div>` : ''}
-    `;
-    volunteerList?.appendChild(article);
-  });
-
-  // References
-  const referencesList = $('#referencesList');
-  const refItems = window.RxResumeData.getItems(resume, 'references');
-  if (!refItems.length) { const s = document.getElementById('references'); if (s) s.hidden = true; }
-  refItems.forEach((ref, index) => {
-    const article = document.createElement('article');
-    article.className = cardClass(index + 1);
-    article.innerHTML = `
-      <h3>${esc(ref.name || '')}</h3>
-      <p class="zmeta">${esc(ref.position || '')}${ref.phone ? ` · ${esc(ref.phone)}` : ''}</p>
-      ${ref.description ? `<div class="zbody">${ref.description}</div>` : ''}
-    `;
-    referencesList?.appendChild(article);
-  });
-
-  // Custom Sections
-  const customSectionsContainer = $('#customSectionsContainer');
-  const customSects = window.RxResumeData.getCustomSections(resume);
-  if (!customSects.length) { if (customSectionsContainer) customSectionsContainer.hidden = true; }
-  if (customSectionsContainer && customSects.length > 0) {
-    customSects.forEach(customSection => {
-      const sectionEl = document.createElement('section');
-      sectionEl.className = 'section';
-      sectionEl.id = `custom-${customSection.title?.replace(/\s+/g, '-').toLowerCase() || 'section'}`;
-      const labelEl = document.createElement('h2');
-      labelEl.className = 'section-label label-green';
-      labelEl.textContent = customSection.title || '';
-      sectionEl.appendChild(labelEl);
-      const grid = document.createElement('div');
-      grid.className = 'cards-grid two';
-      (customSection.items || []).filter(i => !i.hidden).forEach((item, index) => {
-        const article = document.createElement('article');
-        article.className = cardClass(index);
-        const name = item.name || item.title || item.organization || item.position || '';
-        const meta = [item.company || item.issuer || item.publisher || item.awarder || item.school || '', item.date || item.period || ''].filter(Boolean).join(' · ');
-        const link = window.RxResumeData.getLink(item.website);
-        article.innerHTML = `
-          <h3>${link ? `<a class="zlink" href="${esc(link)}" target="_blank" rel="noopener">${esc(name)}</a>` : esc(name)}</h3>
-          ${meta ? `<p class="zmeta">${esc(meta)}</p>` : ''}
-          ${item.description ? `<div class="zbody">${item.description}</div>` : ''}
-        `;
-        grid.appendChild(article);
-      });
-      sectionEl.appendChild(grid);
-      customSectionsContainer.appendChild(sectionEl);
-    });
-  }
-
-  updateNavigationLinks();
-}
+updateNavigationLinks();
 
 async function loadProfileArt() {
   const profileArt = $('#profileArt');
