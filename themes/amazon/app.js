@@ -1,217 +1,535 @@
-let resume = null;
+/* ─────────────────────────────────────────────────────────────────────
+   Amazon Theme — app logic
+   ─────────────────────────────────────────────────────────────────────
+   Responsibilities:
+   - Load resume data and render Amazon-style product cards
+   - Search bar filters skill / project / experience / review cards
+   - Recruiter Shopping Cart with slide-out pane + mailto checkout
+   - Customer Reviews from references (verified-purchase, helpful votes)
+   ───────────────────────────────────────────────────────────────────── */
+
 const THEME_ID = 'amazon';
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-const $ = (selector, root = document) => root.querySelector(selector);
-const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+let resume = null;
+let basicsCache = {};
 
-/* ─── Theme Management ──────────────────────────────────────────────────── */
-class ThemeManager {
+/* ═══ Shopping Cart ═════════════════════════════════════════════════ */
+
+class Cart {
   constructor() {
-    this._stored = localStorage.getItem('amazon-theme');
-    this._apply(this._stored || 'system');
-    document.addEventListener('DOMContentLoaded', () => this._bindToggle());
-  }
+    this.items = [];                  // {id, name, kind, description}
+    this.countEl = $('#cartCount');
+    this.headCountEl = $('#cartHeadCount');
+    this.footCountEl = $('#cartFootCount');
+    this.itemsEl = $('#cartItems');
+    this.checkoutBtn = $('#checkoutBtn');
+    this.pane = $('#cartPane');
+    this.backdrop = $('#cartBackdrop');
 
-  _apply(theme) {
-    const root = document.documentElement;
-    if (theme === 'system') {
-      root.removeAttribute('data-theme');
-    } else {
-      root.setAttribute('data-theme', theme);
-    }
-    this._current = theme;
-    if (theme === 'system') {
-      localStorage.removeItem('amazon-theme');
-    } else {
-      localStorage.setItem('amazon-theme', theme);
-    }
-    this._updateUI();
-  }
-
-  _bindToggle() {
-    const toggle = document.querySelector('.theme-toggle');
-    if (!toggle) return;
-    toggle.addEventListener('click', (e) => {
-      const btn = e.target.closest('.theme-opt');
-      if (btn) this._apply(btn.dataset.theme);
-    });
-    this._updateUI();
-  }
-
-  _updateUI() {
-    $$('.theme-opt').forEach((btn) => {
-      btn.classList.toggle('is-active', btn.dataset.theme === this._current);
-      btn.setAttribute('aria-checked', btn.dataset.theme === this._current ? 'true' : 'false');
-    });
-  }
-}
-
-const themeManager = new ThemeManager();
-
-/* ─── Mobile Navigation ─────────────────────────────────────────────────── */
-class MobileNav {
-  constructor() {
-    this._toggle = document.querySelector('.nav-toggle');
-    this._nav = document.querySelector('.site-nav');
-    if (!this._toggle || !this._nav) return;
-    
-    this._toggle.addEventListener('click', () => this._handleToggle());
-    this._nav.addEventListener('click', (e) => {
-      if (e.target.tagName === 'A') this._close();
-    });
+    $('#cartButton').addEventListener('click', () => this.open());
+    $('#cartClose').addEventListener('click', () => this.close());
+    this.backdrop.addEventListener('click', () => this.close());
+    this.checkoutBtn.addEventListener('click', () => this.checkout());
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') this._close();
+      if (e.key === 'Escape') this.close();
+    });
+    this.render();
+  }
+
+  has(id) {
+    return this.items.some((i) => i.id === id);
+  }
+
+  add(item) {
+    if (this.has(item.id)) return false;
+    this.items.push(item);
+    this.render();
+    showToast(`Added to cart: ${item.name}`);
+    return true;
+  }
+
+  remove(id) {
+    this.items = this.items.filter((i) => i.id !== id);
+    this.render();
+  }
+
+  open() {
+    this.pane.hidden = false;
+    this.backdrop.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  close() {
+    this.pane.hidden = true;
+    this.backdrop.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  render() {
+    const n = this.items.length;
+    this.countEl.textContent = n;
+    this.headCountEl.textContent = `(${n} item${n === 1 ? '' : 's'})`;
+    this.footCountEl.textContent = n;
+    this.checkoutBtn.disabled = n === 0;
+
+    // re-sync Add-to-Cart buttons across the page
+    $$('.az-add-btn').forEach((btn) => {
+      const inCart = this.has(btn.dataset.id);
+      btn.textContent = inCart ? '✓ In Cart' : 'Add to Cart';
+      btn.classList.toggle('is-in-cart', inCart);
+    });
+
+    if (n === 0) {
+      this.itemsEl.innerHTML = `<p class="az-cart-empty">Your Recruiter Cart is empty. Add skills or projects you'd like to "purchase".</p>`;
+      return;
+    }
+
+    this.itemsEl.innerHTML = '';
+    this.items.forEach((item) => {
+      const row = document.createElement('div');
+      row.className = 'az-cart-item';
+      row.dataset.kind = item.kind;
+      const icon = kindIcon(item.kind);
+      row.innerHTML = `
+        <div class="az-cart-item-img">${icon}</div>
+        <div class="az-cart-item-info">
+          <h4>${escapeHtml(item.name)}</h4>
+          <span class="kind">${item.kind}</span>
+          <div class="stock">In stock — ready to discuss</div>
+          <button class="az-cart-item-remove" data-id="${item.id}">Delete</button>
+        </div>
+        <div class="az-cart-item-price">⭐</div>
+      `;
+      this.itemsEl.appendChild(row);
+    });
+    this.itemsEl.querySelectorAll('.az-cart-item-remove').forEach((btn) => {
+      btn.addEventListener('click', () => this.remove(btn.dataset.id));
     });
   }
 
-  _handleToggle() {
-    const isOpen = this._nav.classList.toggle('is-open');
-    this._toggle.setAttribute('aria-expanded', isOpen.toString());
-  }
+  checkout() {
+    if (this.items.length === 0) return;
+    const name = basicsCache.name || 'there';
+    const email = basicsCache.email;
 
-  _close() {
-    this._nav.classList.remove('is-open');
-    this._toggle.setAttribute('aria-expanded', 'false');
+    const itemList = this.items.map((i) => `  • ${i.name} (${i.kind})`).join('\n');
+    const subject = encodeURIComponent(`Interested in your expertise — Recruiter Inquiry`);
+    const body = encodeURIComponent(
+      `Hi ${name},\n\n` +
+      `I came across your portfolio and I am interested in "purchasing" your expertise in:\n\n` +
+      `${itemList}\n\n` +
+      `for our team. Let's schedule a call to discuss the opportunity!\n\n` +
+      `Best regards,\nRecruiter`
+    );
+
+    if (email) {
+      window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    } else {
+      showToast('No contact email on file — copy the items list and reach out via LinkedIn.');
+    }
   }
 }
 
-const mobileNav = new MobileNav();
+const cart = new Cart();
 
-/* ─── Dynamic Navigation Updates ────────────────────────────────────────── */
-function updateNavigationLinks() {
-  const nav = document.querySelector('.site-nav');
-  if (!nav) return;
+/* ═══ Helpers ═══════════════════════════════════════════════════════ */
 
-  const isVisible = (element) => {
-    if (!element) return false;
-    return !element.hidden && !element.closest('[hidden]');
+function kindIcon(kind) {
+  switch (kind) {
+    case 'skill': return '🛠️';
+    case 'project': return '📦';
+    case 'experience': return '💼';
+    default: return '🏷️';
+  }
+}
+
+function escapeHtml(str = '') {
+  return String(str).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function stripHtml(html = '') {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return (tmp.textContent || tmp.innerText || '').trim();
+}
+
+// Deterministic random price between $19.99 and $499.99 from a seed.
+function pseudoPrice(seed) {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 13 + seed.charCodeAt(i)) >>> 0;
+  return (19 + (h % 480)) + 0.99;
+}
+
+function starsMarkup(rating) {
+  const full = Math.round(rating);
+  return '★'.repeat(full) + '☆'.repeat(5 - full);
+}
+
+function showToast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.hidden = false;
+  clearTimeout(showToast._tid);
+  showToast._tid = setTimeout(() => { t.hidden = true; }, 2200);
+}
+
+/* ═══ Product Card Builder ══════════════════════════════════════════ */
+
+function makeCard({ id, kind, title, subtitle, description, link, icon, category }) {
+  const card = document.createElement('article');
+  card.className = 'az-card';
+  card.dataset.searchText = `${title} ${subtitle || ''} ${description || ''}`.toLowerCase();
+  card.dataset.kind = kind;
+
+  const seed = `${kind}|${title}`;
+  const price = pseudoPrice(seed);
+  const priceInt = Math.floor(price);
+  const priceDec = String(Math.round((price - priceInt) * 100)).padStart(2, '0');
+
+  card.innerHTML = `
+    <div class="az-card-img" data-category="${category || kind}">${icon || kindIcon(kind)}</div>
+    <h3 class="az-card-title">${escapeHtml(title)}</h3>
+    ${subtitle ? `<p class="az-card-subtitle">${escapeHtml(subtitle)}</p>` : ''}
+    <div class="az-card-stars">
+      <span class="stars">★★★★★</span>
+    </div>
+    ${description ? `<p class="az-card-desc">${escapeHtml(stripHtml(description))}</p>` : ''}
+    <div class="az-card-price"><span class="sym">$</span>${priceInt}<span class="sym">.${priceDec}</span></div>
+    <div class="az-card-meta">FREE delivery · In Stock</div>
+    <div class="az-card-actions">
+      <button class="az-btn az-btn-cart az-add-btn" data-id="${id}">Add to Cart</button>
+      ${link ? `<a class="az-card-link" href="${link}" target="_blank" rel="noopener">View details →</a>` : ''}
+    </div>
+  `;
+
+  const addBtn = card.querySelector('.az-add-btn');
+  addBtn.addEventListener('click', () => {
+    if (cart.has(id)) {
+      cart.remove(id);
+      showToast(`Removed: ${title}`);
+    } else {
+      cart.add({ id, name: title, kind, description: stripHtml(description || '') });
+    }
+  });
+
+  return card;
+}
+
+/* ═══ Renderers ═════════════════════════════════════════════════════ */
+
+function renderHero(basics) {
+  $$('[data-name]').forEach((n) => { n.textContent = basics.name || ''; });
+  $$('[data-headline]').forEach((n) => { n.textContent = basics.headline || ''; });
+  $('#heroLocation').textContent = basics.location || '';
+
+  // Random price (this is the only fabricated bit, per spec)
+  const priceSeed = `profile|${basics.name || ''}`;
+  const price = Math.floor(pseudoPrice(priceSeed));
+  $('#heroPrice').textContent = price;
+
+  const summary = resume.summary?.hidden ? '' : (resume.summary?.content || '');
+  $('#summaryText').innerHTML = summary;
+
+  // Render profile picture into the hero image slot (or fallback initials)
+  const target = $('#profileImage');
+  const pictureUrl = window.RxResumeData.getPictureUrl?.(resume) || basics.picture?.url || '';
+  const pictureMeta = window.RxResumeData.getPictureMetadata?.(resume) || {};
+  if (target) {
+    if (pictureUrl && !pictureMeta.hidden) {
+      target.innerHTML = '';
+      target.classList.add('has-photo');
+      const img = document.createElement('img');
+      img.src = pictureUrl;
+      img.alt = basics.name || 'Profile';
+      img.loading = 'lazy';
+      target.appendChild(img);
+    } else {
+      // Fallback to initials — no fabricated content
+      const initials = (basics.name || '?').split(/\s+/).map((s) => s[0]).slice(0, 2).join('').toUpperCase();
+      target.innerHTML = `<span class="az-hero-initials">${escapeHtml(initials)}</span>`;
+    }
+  }
+
+  // Add-to-cart actions on the hero pull from real basics data
+  const heroItem = {
+    id: 'profile:hero',
+    name: basics.name || 'Profile',
+    kind: 'profile',
+    description: basics.headline || ''
   };
+  $('#dealAddToCart').addEventListener('click', () => cart.add(heroItem));
+  $('#dealBuyNow').addEventListener('click', () => { cart.add(heroItem); cart.open(); });
+}
 
-
-  // Define all standard sections in order
-  const sections = [
-    { href: '#summaryText', label: 'Summary', container: '#summarySection' },
-    { href: '#profilesGrid', label: 'Profiles', container: '#profilesSection' },
-    { href: '#experience', label: 'Experience', container: '#experience' },
-    { href: '#projects', label: 'Projects', container: '#projects' },
-    { href: '#skills-section', label: 'Skills', container: '#skillsSection' },
-    { href: '#education-section', label: 'Education', container: '#educationSection' },
-    { href: '#languages-section', label: 'Languages', container: '#languagesSection' },
-    { href: '#interests-section', label: 'Interests', container: '#interestsSection' },
-    { href: '#awards-section', label: 'Awards', container: '#awardsSection' },
-    { href: '#certifications-section', label: 'Certifications', container: '#certificationsSection' },
-    { href: '#publications-section', label: 'Publications', container: '#publicationsSection' },
-    { href: '#volunteer-section', label: 'Volunteer', container: '#volunteerSection' },
-    { href: '#references-section', label: 'References', container: '#referencesSection' },
-  ];
-
-  // Add custom sections (after standard)
-  const customSections = document.querySelectorAll('#customSectionsContainer .custom-section');
-  customSections.forEach((section) => {
-    const firstNamedItem = section.querySelector('[data-item-title],[data-item-name]');
-    const itemTitle = firstNamedItem?.dataset.itemTitle;
-    const itemName = firstNamedItem?.dataset.itemName;
-    const sectionTitle = section.querySelector('.panel-head h2')?.textContent?.trim();
-    const title = sectionTitle || itemTitle || itemName || 'Untitled';
-    if (title) {
-      sections.push({
-        href: `#${section.id}`,
-        label: title,
-        container: `#${section.id}`
-      });
-    }
-  });
-
-  // Find all existing nav links (except theme toggle and email)
-  const existingLinks = nav.querySelectorAll('a:not([id="emailLink"])');
-  const themeToggle = nav.querySelector('.theme-toggle');
-  
-  // Remove old section links
-  existingLinks.forEach(link => {
-    if (link.href && link.href.includes('#') && !link.classList.contains('nav-cta')) {
-      link.remove();
-    }
-  });
-
-  // Add nav links for visible sections only
-  sections.forEach((section) => {
-    const container = document.querySelector(section.container);
-    // Only add if container exists and is visible (including parent visibility)
-    if (isVisible(container)) {
-      const link = document.createElement('a');
-      link.href = section.href;
-      link.textContent = section.label;
-      // Insert before theme toggle
-      if (themeToggle) {
-        nav.insertBefore(link, themeToggle);
-      } else {
-        nav.insertBefore(link, nav.lastChild);
-      }
-    }
+function renderSkills(skills) {
+  const grid = $('#skillsGrid');
+  grid.innerHTML = '';
+  if (skills.length === 0) { grid.closest('.az-row').hidden = true; return; }
+  skills.forEach((skill, i) => {
+    const description = (skill.keywords && skill.keywords.length)
+      ? `Keywords: ${skill.keywords.join(', ')}`
+      : (skill.description || 'Top-rated technical skill backed by years of production experience.');
+    grid.appendChild(makeCard({
+      id: `skill:${i}:${skill.name}`,
+      kind: 'skill',
+      title: skill.name || 'Skill',
+      subtitle: skill.level || 'Best Seller',
+      description,
+      icon: '🛠️',
+      category: 'skill',
+    }));
   });
 }
+
+function renderProjects(projects) {
+  const grid = $('#projectsGrid');
+  grid.innerHTML = '';
+  if (projects.length === 0) { grid.closest('.az-row').hidden = true; return; }
+  projects.forEach((p, i) => {
+    const link = window.RxResumeData.getLink(p.website);
+    grid.appendChild(makeCard({
+      id: `project:${i}:${p.name}`,
+      kind: 'project',
+      title: p.name || 'Project',
+      subtitle: p.period || 'Deal of the Day',
+      description: p.description,
+      link,
+      icon: '📦',
+      category: 'project',
+    }));
+  });
+}
+
+function renderExperience(experience) {
+  const grid = $('#experienceGrid');
+  grid.innerHTML = '';
+  if (experience.length === 0) { grid.closest('.az-row').hidden = true; return; }
+  experience.forEach((e, i) => {
+    const link = window.RxResumeData.getLink(e.website);
+    grid.appendChild(makeCard({
+      id: `exp:${i}:${e.position}-${e.company}`,
+      kind: 'experience',
+      title: e.position || 'Role',
+      subtitle: `${e.company || ''} · ${e.period || ''}`.trim(),
+      description: e.description,
+      link,
+      icon: '💼',
+      category: 'experience',
+    }));
+  });
+}
+
+function renderMiniList(containerSel, blockSel, items, formatter) {
+  const container = $(containerSel);
+  const block = $(blockSel);
+  if (!container) return;
+  container.innerHTML = '';
+  if (!items || items.length === 0) {
+    if (block) block.hidden = true;
+    return;
+  }
+  items.forEach((item) => {
+    const el = document.createElement('div');
+    el.className = 'az-mini-item';
+    el.innerHTML = formatter(item);
+    container.appendChild(el);
+  });
+}
+
+function renderEducation(items) {
+  renderMiniList('#educationList', null, items, (e) => `
+    <h4>${escapeHtml(e.degree || 'Education')}</h4>
+    <div class="meta">${escapeHtml([e.school, e.area, e.period].filter(Boolean).join(' • '))}</div>
+    ${e.description ? `<div class="body">${e.description}</div>` : ''}
+  `);
+}
+
+function renderCertifications(items) {
+  renderMiniList('#certificationsList', '#certBlock', items, (c) => {
+    const link = window.RxResumeData.getLink(c.website);
+    const title = c.title || c.name || 'Certification';
+    return `
+      <h4>${link ? `<a href="${link}" target="_blank" rel="noopener">${escapeHtml(title)}</a>` : escapeHtml(title)}</h4>
+      <div class="meta">${escapeHtml([c.issuer, c.date].filter(Boolean).join(' • '))}</div>
+      ${c.description ? `<div class="body">${c.description}</div>` : ''}
+    `;
+  });
+}
+
+function renderAwards(items) {
+  renderMiniList('#awardsList', '#awardsBlock', items, (a) => `
+    <h4>${escapeHtml(a.title || 'Award')}</h4>
+    <div class="meta">${escapeHtml([a.awarder, a.date].filter(Boolean).join(' • '))}</div>
+    ${a.description ? `<div class="body">${a.description}</div>` : ''}
+  `);
+}
+
+function renderLanguages(items) {
+  renderMiniList('#languagesList', '#langBlock', items, (l) => `
+    <h4>${escapeHtml(l.language || 'Language')}</h4>
+    <div class="meta">${escapeHtml(l.fluency || '')}</div>
+  `);
+}
+
+function renderInterests(items) {
+  renderMiniList('#interestsList', '#interestsBlock', items, (i) => `
+    <h4>${escapeHtml(i.name || 'Interest')}</h4>
+    ${i.keywords?.length ? `<div class="meta">${escapeHtml(i.keywords.join(', '))}</div>` : ''}
+  `);
+}
+
+function renderPublications(items) {
+  renderMiniList('#publicationsList', '#publicationsBlock', items, (p) => {
+    const link = window.RxResumeData.getLink(p.website);
+    const title = p.title || p.name || 'Publication';
+    return `
+      <h4>${link ? `<a href="${link}" target="_blank" rel="noopener">${escapeHtml(title)}</a>` : escapeHtml(title)}</h4>
+      <div class="meta">${escapeHtml([p.publisher, p.date].filter(Boolean).join(' • '))}</div>
+      ${p.description ? `<div class="body">${p.description}</div>` : ''}
+    `;
+  });
+}
+
+function renderVolunteer(items) {
+  renderMiniList('#volunteerList', '#volunteerBlock', items, (v) => `
+    <h4>${escapeHtml(v.organization || 'Volunteer')}</h4>
+    <div class="meta">${escapeHtml([v.position, v.period].filter(Boolean).join(' • '))}</div>
+    ${v.description ? `<div class="body">${v.description}</div>` : ''}
+  `);
+}
+
+/* ─── Customer Reviews (from references) ──────────────────────────── */
+
+function renderReviews(references) {
+  const section = $('#reviews');
+  const list = $('#referencesList');
+  list.innerHTML = '';
+
+  if (!references || references.length === 0) {
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+
+  references.forEach((ref) => {
+    const name = ref.name || '';
+    if (!name && !ref.description) return;
+    const initials = (name || '?').split(/\s+/).map((s) => s[0]).slice(0, 2).join('').toUpperCase();
+
+    const article = document.createElement('article');
+    article.className = 'az-review';
+    article.dataset.searchText = `${name} ${ref.position || ''} ${stripHtml(ref.description || '')}`.toLowerCase();
+    article.innerHTML = `
+      <div class="az-review-header">
+        <div class="az-review-avatar">${escapeHtml(initials)}</div>
+        <div class="az-review-name">${escapeHtml(name)}</div>
+      </div>
+      <div class="az-review-stars-line">
+        <span class="az-review-stars">★★★★★</span>
+        ${ref.position ? `<span class="az-review-title">${escapeHtml(ref.position)}</span>` : ''}
+      </div>
+      <div class="az-review-meta">
+        <span class="az-verified">Verified Purchase</span>
+      </div>
+      ${ref.description ? `<div class="az-review-body">${ref.description}</div>` : ''}
+      <div class="az-review-actions">
+        <button class="az-helpful-btn">Helpful (<span class="hcount">0</span>)</button>
+      </div>
+    `;
+    list.appendChild(article);
+
+    const btn = article.querySelector('.az-helpful-btn');
+    const hcount = btn.querySelector('.hcount');
+    btn.addEventListener('click', () => {
+      const voted = btn.classList.toggle('is-voted');
+      hcount.textContent = voted ? 1 : 0;
+    });
+  });
+
+  $('#reviewCount').textContent = `${references.length} review${references.length === 1 ? '' : 's'}`;
+}
+
+/* ═══ Account dropdown ══════════════════════════════════════════════ */
+
+function bindAccountDropdown() {
+  const btn = $('#accountToggle');
+  const dd = $('#accountDropdown');
+  const wrap = $('#accountMenu');
+
+  const open = () => { dd.hidden = false; btn.setAttribute('aria-expanded', 'true'); };
+  const close = () => { dd.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dd.hidden ? open() : close();
+  });
+  document.addEventListener('click', (e) => {
+    if (!wrap.contains(e.target)) close();
+  });
+}
+
+/* ═══ Search filtering ═════════════════════════════════════════════ */
+
+function bindSearch() {
+  const input = $('#searchInput');
+  const cat = $('#searchCategory');
+  const run = () => {
+    const q = input.value.trim().toLowerCase();
+    const c = cat.value;
+
+    const groups = {
+      skills: $$('#skillsGrid .az-card'),
+      projects: $$('#projectsGrid .az-card'),
+      experience: $$('#experienceGrid .az-card'),
+      reviews: $$('#referencesList .az-review'),
+    };
+
+    Object.entries(groups).forEach(([key, els]) => {
+      const sectionVisible = c === 'all' || c === key;
+      els.forEach((el) => {
+        const matches = !q || (el.dataset.searchText || '').includes(q);
+        el.classList.toggle('is-hidden', !(sectionVisible && matches));
+      });
+    });
+
+    // Hide section row entirely when none of its cards match (only when searching)
+    if (q) {
+      ['#skillsGrid', '#projectsGrid', '#experienceGrid'].forEach((sel) => {
+        const grid = $(sel);
+        if (!grid) return;
+        const anyVisible = $$('.az-card', grid).some((el) => !el.classList.contains('is-hidden'));
+        grid.closest('.az-row').style.display = anyVisible ? '' : 'none';
+      });
+    } else {
+      $$('.az-row').forEach((s) => { s.style.display = ''; });
+    }
+  };
+  input.addEventListener('input', run);
+  cat.addEventListener('change', run);
+}
+
+/* ═══ Boot ═══════════════════════════════════════════════════════════ */
 
 async function loadResumeData() {
-  console.info(`[${THEME_ID}] Booting theme at ${window.location.pathname}`);
-  console.info(`[${THEME_ID}] Loading resume data from ${CONFIG.paths.resumeData}`);
+  console.info(`[${THEME_ID}] Loading resume from ${CONFIG.paths.resumeData}`);
   try {
     resume = await window.RxResumeData.loadResume(CONFIG.paths.resumeData);
-    console.info(`[${THEME_ID}] Resume loaded successfully.`);
-    initializePage();
-    loadProfileArt();
-  } catch (error) {
-    console.error(`[${THEME_ID}] Failed to load resume data from ${CONFIG.paths.resumeData}`, error);
-    console.error(`[${THEME_ID}] Check that you are serving from repo root and opening /themes/amazon/index.html`);
+    init();
+  } catch (err) {
+    console.error(`[${THEME_ID}] Failed to load resume`, err);
     document.body.innerHTML = CONFIG.errors.resumeLoadError;
   }
 }
 
-function setLink(element, href, fallbackText) {
-  if (!element) return;
-
-  if (href) {
-    element.href = href;
-    if (fallbackText) {
-      element.textContent = fallbackText;
-    }
-    element.hidden = false;
-    element.removeAttribute('aria-hidden');
-    return;
-  }
-
-  element.hidden = true;
-  element.setAttribute('aria-hidden', 'true');
-}
-
-function fillText(selector, value) {
-  $$(selector).forEach((element) => {
-    element.textContent = value || '';
-  });
-}
-
-function fillById(id, value) {
-  const element = $(`#${id}`);
-  if (!element) return;
-  element.textContent = value || '';
-}
-
-function toggleSection(container, shouldShow) {
-  if (!container) return;
-  container.hidden = !shouldShow;
-}
-
-function setAnchorVisibility(anchorSelector, shouldShow) {
-  const anchor = $(anchorSelector);
-  if (!anchor) return;
-  anchor.hidden = !shouldShow;
-}
-
-function initializePage() {
-  if (!resume) return;
-
+function init() {
   const basics = window.RxResumeData.getBasics(resume);
+  basicsCache = basics;
+
   const profiles = window.RxResumeData.getItems(resume, 'profiles');
-  const visibleProfiles = profiles.filter((item) => !!window.RxResumeData.getLink(item.website));
   const experience = window.RxResumeData.getItems(resume, 'experience');
   const projects = window.RxResumeData.getItems(resume, 'projects');
   const skills = window.RxResumeData.getItems(resume, 'skills');
@@ -223,588 +541,51 @@ function initializePage() {
   const publications = window.RxResumeData.getItems(resume, 'publications');
   const volunteer = window.RxResumeData.getItems(resume, 'volunteer');
   const references = window.RxResumeData.getItems(resume, 'references');
-  const customSections = window.RxResumeData.getCustomSections(resume);
-  const visibleCustomSections = customSections.filter((section) =>
-    (section.items || []).some((item) => !item.hidden)
-  );
 
-  document.title = [basics.name, basics.headline].filter(Boolean).join(' - ') || 'Portfolio Shop';
+  document.title = [basics.name, basics.headline].filter(Boolean).join(' — ') || 'Portfolio Shop';
+  $('#navLocation').textContent = basics.location ? basics.location.split(',')[0] : '';
+  $('#footerHeadline').textContent = basics.headline || '';
+  $('#footerLocation').textContent = basics.location || '';
 
-  fillText('[data-name]', basics.name || '');
-  fillText('[data-headline]', basics.headline || '');
-
-  fillById('heroLocation', basics.location || 'Available worldwide');
-  fillById('footerHeadline', basics.headline || '');
-  fillById('footerLocation', basics.location || '');
-  fillById('signalEmail', basics.email || '');
-
-  const websiteUrl = window.RxResumeData.getLink(basics.website);
-  fillById('signalWebsite', websiteUrl || 'Portfolio link unavailable');
-
-  const summary = resume.summary;
-  const summaryEl = $('#summaryText');
-  if (summaryEl) {
-    summaryEl.innerHTML = summary?.hidden ? '' : (summary?.content || '');
-  }
-  const hasSummary = !summary?.hidden && !!summary?.content;
-
-  const github = profiles.find((item) => (item.network || '').toLowerCase().includes('github'));
-  const linkedin = profiles.find((item) => (item.network || '').toLowerCase().includes('linkedin'));
+  const github = profiles.find((p) => (p.network || '').toLowerCase().includes('github'));
+  const linkedin = profiles.find((p) => (p.network || '').toLowerCase().includes('linkedin'));
   const githubUrl = github ? window.RxResumeData.getLink(github.website) : '';
   const linkedinUrl = linkedin ? window.RxResumeData.getLink(linkedin.website) : '';
   const emailUrl = basics.email ? `mailto:${basics.email}` : '';
 
-  setLink($('#emailLink'), emailUrl, 'Contact');
-  setLink($('#githubLink'), githubUrl, 'GitHub');
-  setLink($('#linkedinLink'), linkedinUrl, 'LinkedIn');
-  setLink($('#footerGithub'), githubUrl, 'GitHub');
-  setLink($('#footerLinkedin'), linkedinUrl, 'LinkedIn');
-  setLink($('#footerEmail'), emailUrl, 'Contact');
+  [['#ddGithub', githubUrl], ['#ddLinkedin', linkedinUrl], ['#ddEmail', emailUrl],
+   ['#footerGithub', githubUrl], ['#footerLinkedin', linkedinUrl], ['#footerEmail', emailUrl],
+   ['#contactGithub', githubUrl], ['#contactLinkedin', linkedinUrl], ['#contactEmail', emailUrl]
+  ].forEach(([sel, url]) => {
+    const el = $(sel);
+    if (!el) return;
+    if (url) { el.href = url; el.hidden = false; }
+    else { el.hidden = true; }
+  });
 
-  fillById('projectCount', `${projects.length} ${projects.length === 1 ? 'project' : 'projects'}`);
-  fillById('experienceCount', `${experience.length} ${experience.length === 1 ? 'role' : 'roles'}`);
+  $('#projectCount').textContent = `${projects.length} project${projects.length === 1 ? '' : 's'}`;
+  $('#experienceCount').textContent = `${experience.length} role${experience.length === 1 ? '' : 's'}`;
 
-  renderProfiles(profiles);
-  renderExperience(experience);
-  renderProjects(projects);
+  renderHero(basics);
   renderSkills(skills);
+  renderProjects(projects);
+  renderExperience(experience);
   renderEducation(education);
+  renderCertifications(certifications);
+  renderAwards(awards);
   renderLanguages(languages);
   renderInterests(interests);
-  renderAwards(awards);
-  renderCertifications(certifications);
   renderPublications(publications);
   renderVolunteer(volunteer);
-  renderReferences(references);
-  renderCustomSections(customSections);
-
-  toggleSection($('#summaryText').closest('.hero-section'), hasSummary || visibleProfiles.length > 0 || experience.length > 0 || projects.length > 0);
-  setAnchorVisibility('#summarySection', hasSummary);
-  setAnchorVisibility('#profilesSection', visibleProfiles.length > 0);
-  setAnchorVisibility('#experienceSection', experience.length > 0);
-  setAnchorVisibility('#projectsSection', projects.length > 0);
-  setAnchorVisibility('#skillsSection', skills.length > 0);
-  setAnchorVisibility('#educationSection', education.length > 0);
-  setAnchorVisibility('#languagesSection', languages.length > 0);
-  setAnchorVisibility('#interestsSection', interests.length > 0);
-  setAnchorVisibility('#awardsSection', awards.length > 0);
-  setAnchorVisibility('#certificationsSection', certifications.length > 0);
-  setAnchorVisibility('#publicationsSection', publications.length > 0);
-  setAnchorVisibility('#volunteerSection', volunteer.length > 0);
-  setAnchorVisibility('#referencesSection', references.length > 0);
-
-  toggleSection($('#experience').closest('.content-section'), experience.length > 0);
-  toggleSection($('#projects').closest('.content-section'), projects.length > 0);
-  toggleSection(
-    $('#craft').closest('.content-section'),
-    skills.length > 0 ||
-      education.length > 0 ||
-      languages.length > 0 ||
-      interests.length > 0 ||
-      awards.length > 0 ||
-      certifications.length > 0 ||
-      publications.length > 0 ||
-      volunteer.length > 0 ||
-      references.length > 0 ||
-        visibleCustomSections.length > 0
-  );
-
-  updateNavigationLinks();
-}
-
-function renderProfiles(profiles) {
-  const container = $('#profilesGrid');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  let visibleProfiles = 0;
-
-  profiles.forEach((profile) => {
-    const item = document.createElement('a');
-    const href = window.RxResumeData.getLink(profile.website);
-    item.className = 'profile-chip';
-    item.target = '_blank';
-    item.rel = 'noopener';
-
-    if (href) {
-      item.href = href;
-      item.hidden = false;
-      item.removeAttribute('aria-hidden');
-      visibleProfiles += 1;
-    } else {
-      item.hidden = true;
-      item.setAttribute('aria-hidden', 'true');
-    }
-
-    item.innerHTML = `
-      <span class="profile-network">${profile.network || 'Profile'}</span>
-      <span class="profile-handle">${profile.username || href || ''}</span>
-    `;
-    container.appendChild(item);
-  });
-
-  container.hidden = visibleProfiles === 0;
-}
-
-function renderExperience(items) {
-  const container = $('#experienceList');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  items.forEach((item, index) => {
-    const article = document.createElement('article');
-    const companyUrl = window.RxResumeData.getLink(item.website);
-    const companyMarkup = companyUrl
-      ? `<a href="${companyUrl}" target="_blank" rel="noopener">${item.company || ''}</a>`
-      : (item.company || '');
-
-    article.className = 'timeline-item';
-    article.innerHTML = `
-      <div class="timeline-marker">
-        <span>${String(index + 1).padStart(2, '0')}</span>
-      </div>
-      <div class="timeline-content">
-        <div class="timeline-head">
-          <p class="timeline-period">${item.period || ''}</p>
-          <h3>${item.position || ''}</h3>
-          <p class="timeline-company">${companyMarkup}</p>
-        </div>
-        <div class="timeline-body">${item.description || ''}</div>
-      </div>
-    `;
-    container.appendChild(article);
-  });
-}
-
-function renderProjects(items) {
-  const container = $('#projectsGrid');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  items.forEach((project, index) => {
-    const article = document.createElement('article');
-    const link = window.RxResumeData.getLink(project.website);
-
-    article.className = 'project-card';
-    article.innerHTML = `
-      <div class="project-index">${String(index + 1).padStart(2, '0')}</div>
-      <div class="project-body">
-        <h3>${project.name || ''}</h3>
-        <div class="project-description">${project.description || ''}</div>
-      </div>
-      <div class="project-footer">
-        ${link ? `<a href="${link}" target="_blank" rel="noopener" class="button button-secondary project-link">View project</a>` : '<span class="project-status">Private or offline</span>'}
-      </div>
-    `;
-    container.appendChild(article);
-  });
-}
-
-function renderSkills(items) {
-  const container = $('#skillsCloud');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  items.forEach((skill) => {
-    const element = document.createElement('span');
-    element.className = 'skill-pill';
-    element.textContent = skill.name || '';
-    container.appendChild(element);
-  });
-
-  toggleSection(container.closest('.craft-panel'), items.length > 0);
-}
-
-function renderEducation(items) {
-  const container = $('#educationList');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  items.forEach((entry) => {
-    const article = document.createElement('article');
-    article.className = 'education-item';
-    article.innerHTML = `
-      <h3>${entry.degree || 'Education'}</h3>
-      <p class="education-school">${entry.school || ''}</p>
-      <p class="education-meta">${[entry.area, entry.grade, entry.period].filter(Boolean).join(' • ')}</p>
-      <div class="education-description">${entry.description || ''}</div>
-    `;
-    container.appendChild(article);
-  });
-
-  toggleSection(container.closest('.craft-panel'), items.length > 0);
-}
-
-function renderLanguages(items) {
-  const container = $('#languagesList');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  items.forEach((entry) => {
-    const row = document.createElement('div');
-    row.className = 'language-row';
-    row.innerHTML = `
-      <span>${entry.language || ''}</span>
-      <strong>${entry.fluency || 'Working proficiency'}</strong>
-    `;
-    container.appendChild(row);
-  });
-
-  toggleSection(container.closest('.craft-panel'), items.length > 0);
-}
-
-function renderInterests(items) {
-  const container = $('#interestsList');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  items.forEach((entry) => {
-    const row = document.createElement('div');
-    row.className = 'interest-row';
-    row.innerHTML = `
-      <span class="interest-name">${entry.name || ''}</span>
-      ${entry.keywords && entry.keywords.length > 0 ? `<span class="interest-keywords">${entry.keywords.join(', ')}</span>` : ''}
-    `;
-    container.appendChild(row);
-  });
-
-  toggleSection(container.closest('.craft-panel'), items.length > 0);
-}
-
-function renderAwards(items) {
-  const container = $('#awardsList');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  items.forEach((entry) => {
-    const link = window.RxResumeData.getLink(entry.website);
-    const label = entry.title || link || '';
-    if (!label) return;
-    const article = document.createElement('article');
-    article.className = 'award-item';
-    article.innerHTML = `
-      <h3>${link ? `<a href="${link}" target="_blank" rel="noopener">${label}</a>` : label}</h3>
-      <p class="award-meta">${entry.awarder || ''} ${entry.date ? '• ' + entry.date : ''}</p>
-      ${entry.description ? `<div class="award-description">${entry.description}</div>` : ''}
-    `;
-    container.appendChild(article);
-  });
-
-  toggleSection(container.closest('.craft-panel'), items.length > 0);
-}
-
-function renderCertifications(items) {
-  const container = $('#certificationsList');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  items.forEach((entry) => {
-    const link = window.RxResumeData.getLink(entry.website);
-    const label = entry.title || link || '';
-    if (!label) return;
-    const article = document.createElement('article');
-    article.className = 'certification-item';
-    article.innerHTML = `
-      <h3>${link ? `<a href="${link}" target="_blank" rel="noopener">${label}</a>` : label}</h3>
-      <p class="cert-meta">${entry.issuer || ''} ${entry.date ? '• ' + entry.date : ''}</p>
-      ${entry.description ? `<div class="cert-description">${entry.description}</div>` : ''}
-    `;
-    container.appendChild(article);
-  });
-
-  toggleSection(container.closest('.craft-panel'), items.length > 0);
-}
-
-function renderPublications(items) {
-  const container = $('#publicationsList');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  items.forEach((entry) => {
-    const link = window.RxResumeData.getLink(entry.website);
-    const label = entry.title || link || '';
-    if (!label) return;
-    const article = document.createElement('article');
-    article.className = 'publication-item';
-    article.innerHTML = `
-      <h3>${link ? `<a href="${link}" target="_blank" rel="noopener">${label}</a>` : label}</h3>
-      <p class="publication-meta">${entry.publisher || ''} ${entry.date ? '• ' + entry.date : ''}</p>
-      ${entry.description ? `<div class="publication-description">${entry.description}</div>` : ''}
-    `;
-    container.appendChild(article);
-  });
-
-  toggleSection(container.closest('.craft-panel'), items.length > 0);
-}
-
-function renderVolunteer(items) {
-  const container = $('#volunteerList');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  items.forEach((entry) => {
-    const article = document.createElement('article');
-    article.className = 'volunteer-item';
-    article.innerHTML = `
-      <h3>${entry.organization || ''}</h3>
-      <p class="volunteer-meta">${entry.location || ''} ${entry.period ? '• ' + entry.period : ''}</p>
-      ${entry.description ? `<div class="volunteer-description">${entry.description}</div>` : ''}
-    `;
-    container.appendChild(article);
-  });
-
-  toggleSection(container.closest('.craft-panel'), items.length > 0);
-}
-
-function renderReferences(items) {
-  const container = $('#referencesList');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  items.forEach((entry) => {
-    const article = document.createElement('article');
-    article.className = 'reference-item';
-    article.innerHTML = `
-      <h3>${entry.name || ''}</h3>
-      <p class="reference-meta">${entry.position || ''} ${entry.phone ? '• ' + entry.phone : ''}</p>
-      ${entry.description ? `<div class="reference-description">${entry.description}</div>` : ''}
-    `;
-    container.appendChild(article);
-  });
-
-  toggleSection(container.closest('.craft-panel'), items.length > 0);
-}
-
-function renderCustomSections(customSections = window.RxResumeData.getCustomSections(resume)) {
-  const container = $('#customSectionsContainer');
-  if (!container) return;
-
-  if (customSections.length === 0) {
-    container.hidden = true;
-    return;
-  }
-
-  container.innerHTML = '';
-
-  customSections.forEach(customSection => {
-    const visibleItems = (customSection.items || []).filter((item) => !item.hidden);
-    if (visibleItems.length === 0) return;
-
-    const sectionEl = document.createElement('section');
-    sectionEl.className = 'craft-panel custom-section';
-    sectionEl.id = 'custom-' + (customSection.id || customSection.title.toLowerCase().replace(/\s+/g, '-'));
-    
-    const headDiv = document.createElement('div');
-    headDiv.className = 'panel-head';
-    headDiv.innerHTML = `<h2>${customSection.title || ''}</h2>`;
-    sectionEl.appendChild(headDiv);
-    
-    const itemsDiv = document.createElement('div');
-    itemsDiv.className = 'custom-items-' + (customSection.type || 'default');
-    
-    // Render items based on custom section type
-    visibleItems.forEach((item, index) => {
-        const itemEl = document.createElement('div');
-        itemEl.dataset.itemTitle = item.title || '';
-        itemEl.dataset.itemName = item.name || '';
-        
-        if (customSection.type === 'experience' || customSection.type === 'volunteer') {
-          itemEl.className = 'timeline-item';
-          const link = window.RxResumeData.getLink(item.website);
-          const companyMarkup = link
-            ? `<a href="${link}" target="_blank" rel="noopener">${item.company || ''}</a>`
-            : (item.company || '');
-          itemEl.innerHTML = `
-            <div class="timeline-marker"><span>${String(index + 1).padStart(2, '0')}</span></div>
-            <div class="timeline-content">
-              <div class="timeline-head">
-                <p class="timeline-period">${item.period || ''}</p>
-                <h3>${item.position || item.organization || ''}</h3>
-                <p class="timeline-company">${companyMarkup}</p>
-              </div>
-              <div class="timeline-body">${item.description || ''}</div>
-            </div>
-          `;
-        } else if (customSection.type === 'projects') {
-          itemEl.className = 'project-card';
-          const link = window.RxResumeData.getLink(item.website);
-          itemEl.innerHTML = `
-            <div class="project-index">${String(index + 1).padStart(2, '0')}</div>
-            <div class="project-body">
-              <h3>${item.name || ''}</h3>
-              <div class="project-description">${item.description || ''}</div>
-            </div>
-            <div class="project-footer">
-              ${link ? `<a href="${link}" target="_blank" rel="noopener" class="button button-secondary project-link">View project</a>` : '<span class="project-status">Private or offline</span>'}
-            </div>
-          `;
-        } else if (customSection.type === 'education') {
-          itemEl.className = 'education-item';
-          itemEl.innerHTML = `
-            <h3>${item.degree || 'Education'}</h3>
-            <p class="education-school">${item.school || ''}</p>
-            <p class="education-meta">${[item.area, item.grade, item.period].filter(Boolean).join(' • ')}</p>
-            <div class="education-description">${item.description || ''}</div>
-          `;
-        } else if (customSection.type === 'skills') {
-          itemEl.className = 'skill-pill';
-          itemEl.textContent = item.name || '';
-        } else if (customSection.type === 'languages') {
-          itemEl.className = 'language-row';
-          itemEl.innerHTML = `
-            <span>${item.language || ''}</span>
-            <strong>${item.fluency || 'Working proficiency'}</strong>
-          `;
-        } else if (customSection.type === 'interests') {
-          itemEl.className = 'interest-row';
-          itemEl.innerHTML = `
-            <span class="interest-name">${item.name || ''}</span>
-            ${item.keywords && item.keywords.length > 0 ? `<span class="interest-keywords">${item.keywords.join(', ')}</span>` : ''}
-          `;
-        } else if (customSection.type === 'awards' || customSection.type === 'certifications' || customSection.type === 'publications') {
-          itemEl.className = 'award-item';
-          const link = window.RxResumeData.getLink(item.website);
-          const title = item.title || item.name || link || '';
-          if (!title) return;
-          itemEl.innerHTML = `
-            <h3>${link ? `<a href="${link}" target="_blank" rel="noopener">${title}</a>` : title}</h3>
-            <p class="award-meta">${item.issuer || item.publisher || item.awarder || ''} ${item.date ? '• ' + item.date : ''}</p>
-            ${item.description ? `<div class="award-description">${item.description}</div>` : ''}
-          `;
-        } else if (customSection.type === 'references') {
-          itemEl.className = 'reference-item';
-          itemEl.innerHTML = `
-            <h3>${item.name || ''}</h3>
-            <p class="reference-meta">${item.position || ''} ${item.phone ? '• ' + item.phone : ''}</p>
-            ${item.description ? `<div class="reference-description">${item.description}</div>` : ''}
-          `;
-        } else if (customSection.type === 'profiles') {
-          itemEl.className = 'profile-chip';
-          const link = window.RxResumeData.getLink(item.website);
-          itemEl.innerHTML = `
-            <span class="profile-network">${item.network || 'Profile'}</span>
-            <span class="profile-handle">${item.username || link || ''}</span>
-          `;
-          if (link) {
-            itemEl.href = link;
-            itemEl.target = '_blank';
-            itemEl.rel = 'noopener';
-          }
-        } else {
-          itemEl.innerHTML = item.content || item.description || item.name || '';
-        }
-        
-        itemsDiv.appendChild(itemEl);
-    });
-    
-    sectionEl.appendChild(itemsDiv);
-    container.appendChild(sectionEl);
-  });
-
-  container.hidden = container.children.length === 0;
-  updateNavigationLinks();
-}
-
-async function loadProfileArt() {
-  const target = $('#profileArt');
-  if (!target || !resume) return;
-
-  const pictureMeta = window.RxResumeData.getPictureMetadata(resume);
-  if (pictureMeta.hidden) {
-    target.innerHTML = '';
-    return;
-  }
-
-  try {
-    const pictureUrl = window.RxResumeData.getPictureUrl(resume);
-
-    if (pictureUrl) {
-      const baseWidth = target.clientWidth || pictureMeta.width || pictureMeta.size || 280;
-      const baseHeight = target.clientHeight || pictureMeta.height || (baseWidth / (pictureMeta.aspectRatio || 1));
-      const imageScale = 0.9;
-      const pictureWidth = Math.round(baseWidth * imageScale);
-      const pictureHeight = Math.round(baseHeight * imageScale);
-
-      const frame = document.createElement('div');
-      frame.className = 'portrait-media';
-      frame.style.width = `${pictureWidth}px`;
-      frame.style.height = `${pictureHeight}px`;
-
-      if (pictureMeta.borderWidth) {
-        frame.style.border = `${(pictureMeta.borderWidth * 4) / 3}px solid ${pictureMeta.borderColor || 'transparent'}`;
-      }
-      if (pictureMeta.borderRadius !== undefined) {
-        frame.style.borderRadius = `${(pictureMeta.borderRadius * 4) / 3}px`;
-      }
-      if (pictureMeta.shadowWidth && pictureMeta.shadowWidth > 0) {
-        frame.style.boxShadow = `0 14px ${(pictureMeta.shadowWidth * 10) / 3}px ${pictureMeta.shadowColor || 'rgba(15, 23, 42, 0.28)'}`;
-      }
-      if (pictureMeta.rotation) {
-        frame.style.transform = `rotate(${pictureMeta.rotation}deg)`;
-      }
-
-      const image = document.createElement('img');
-      image.src = pictureUrl;
-      image.alt = 'Profile picture';
-      image.loading = 'lazy';
-      image.style.width = '100%';
-      image.style.height = '100%';
-      image.style.objectFit = 'cover';
-      image.style.display = 'block';
-
-      frame.appendChild(image);
-      target.innerHTML = '';
-      target.appendChild(frame);
-      console.info(`[${THEME_ID}] Profile image rendered.`);
-      return;
-    }
-
-    const response = await fetch(CONFIG.paths.profileArt);
-    if (!response.ok) {
-      throw new Error(CONFIG.errors.profileArtNotFound);
-    }
-    target.innerHTML = await response.text();
-  } catch (error) {
-    console.warn(CONFIG.errors.profileArtNotFound, error);
-    target.innerHTML = CONFIG.fallbacks.profileArt || '';
-  }
-}
-
-function initSmoothScroll() {
-  $$('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', (event) => {
-      const href = anchor.getAttribute('href');
-      if (!href || href === '#' || href === '#top') return;
-
-      const target = $(href);
-      if (!target) return;
-
-      event.preventDefault();
-      const offset = 88;
-      const position = target.getBoundingClientRect().top + window.pageYOffset - offset;
-      window.scrollTo({ top: position, behavior: 'smooth' });
-    });
-  });
+  renderReviews(references);
+
+  bindAccountDropdown();
+  bindSearch();
+  cart.render(); // re-sync buttons now that cards exist
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    initSmoothScroll();
-    loadResumeData();
-  });
+  document.addEventListener('DOMContentLoaded', loadResumeData);
 } else {
-  initSmoothScroll();
   loadResumeData();
 }

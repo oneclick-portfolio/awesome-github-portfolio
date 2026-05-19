@@ -3,205 +3,255 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#111827" />
+  <meta name="theme-color" content="#131921" />
   <title>Portfolio Shop</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Amazon+Ember:wght@400;500;700&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <div class="page-shell">
-    <header class="site-header">
-      <div class="container nav-bar">
-        <div class="search-shell">
-          <input class="search-input" type="text" placeholder="Search Your Next Project" aria-label="Search projects" />
-        </div>
-        <a class="brand" href="#top" aria-label="Jump to top">
-          <span class="brand-icon">🛒</span>
-          <span class="brand-copy">
-            <span class="brand-name" data-name></span>
-            <span class="brand-label">Portfolio Shop</span>
-          </span>
+    <!-- ── Amazon-style top navigation bar ─────────────────────────── -->
+    <header class="az-header">
+      <div class="az-nav">
+        <a class="az-logo" href="#top" aria-label="Home">
+          <span class="az-logo-text" data-name>Portfolio</span>
+          <span class="az-logo-tld">.dev</span>
         </a>
-        <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
-      </div>
-      <div class="container nav-row">
-        <nav class="site-nav" aria-label="Primary">
-          <div class="theme-toggle" role="radiogroup" aria-label="Color theme">
-            <button class="theme-opt" data-theme="dark" aria-label="Dark theme" title="Dark">🌙</button>
-            <button class="theme-opt is-active" data-theme="system" aria-label="System theme" title="System">⬡</button>
-            <button class="theme-opt" data-theme="light" aria-label="Light theme" title="Light">☀</button>
+
+        <div class="az-deliver" aria-hidden="true">
+          <span class="az-deliver-icon">📍</span>
+          <div class="az-deliver-text">
+            <span class="muted">Deliver to</span>
+            <strong id="navLocation">Your Team</strong>
           </div>
-          <a id="emailLink" class="nav-cta" target="_blank" rel="noopener">Contact</a>
-        </nav>
+        </div>
+
+        <form class="az-search" role="search" onsubmit="return false;">
+          <select class="az-search-cat" aria-label="Search category" id="searchCategory">
+            <option value="all">All</option>
+            <option value="projects">Projects</option>
+            <option value="skills">Skills</option>
+            <option value="experience">Experience</option>
+            <option value="reviews">Reviews</option>
+          </select>
+          <input class="az-search-input" type="text" id="searchInput" placeholder="Search skills, projects, experience…" aria-label="Search portfolio" />
+          <button class="az-search-btn" type="submit" aria-label="Search">🔍</button>
+        </form>
+
+        <div class="az-account" id="accountMenu">
+          <button class="az-account-btn" aria-haspopup="true" aria-expanded="false" id="accountToggle">
+            <span class="az-account-greet">Hello, Recruiter</span>
+            <strong class="az-account-line">Account &amp; Lists ▾</strong>
+          </button>
+          <div class="az-account-dd" id="accountDropdown" hidden>
+            <a id="ddGithub" target="_blank" rel="noopener">Your GitHub</a>
+            <a id="ddLinkedin" target="_blank" rel="noopener">Your LinkedIn</a>
+            <a id="ddEmail">Contact</a>
+            <a href="#projects">Browse Projects</a>
+            <a href="#reviews">Read Reviews</a>
+          </div>
+        </div>
+
+        <a class="az-returns" href="#experience">
+          <span class="muted">Returning</span>
+          <strong>&amp; Orders</strong>
+        </a>
+
+        <button class="az-cart" id="cartButton" aria-label="Open shopping cart">
+          <span class="az-cart-icon">🛒</span>
+          <span class="az-cart-count" id="cartCount">0</span>
+          <strong class="az-cart-label">Cart</strong>
+        </button>
+      </div>
+
+      <!-- secondary navy bar -->
+      <div class="az-subnav">
+        <button class="az-subnav-menu" aria-label="All categories">☰ All</button>
+        <a href="#projects">Today's Deals</a>
+        <a href="#experience">Buy Again</a>
+        <a href="#skills">Best Sellers</a>
+        <a href="#reviews">Customer Reviews</a>
+        <a href="#education">Education Hub</a>
+        <a href="#certifications">Certifications</a>
+        <a href="#contact" id="subContactLink">Contact Seller</a>
       </div>
     </header>
 
     <main id="top">
-      <div id="summarySection"></div>
-      <section class="hero-section">
-        <div class="container hero-banner-grid">
-          <div class="hero-banner hero-banner-sponsored">
-            <div class="hero-banner-content">
-              <p class="badge">Sponsored</p>
-              <h1 class="hero-title">Portfolio Summary</h1>
-              <p class="hero-headline" data-headline></p>
-              <div id="summaryText" class="hero-summary"></div>
-              <div class="hero-quick-links">
-                <a id="githubLink" target="_blank" rel="noopener">GitHub</a>
-                <a id="linkedinLink" target="_blank" rel="noopener">LinkedIn</a>
+      <!-- ── Deal of the Day hero: user profile ───────────────────── -->
+      <section class="az-hero">
+        <div class="az-hero-inner">
+          <div class="az-hero-badge">⚡ Deal of the Day</div>
+          <div class="az-hero-grid">
+            <div class="az-hero-img" id="profileImage" aria-hidden="true"></div>
+            <div class="az-hero-body">
+              <span class="az-available">✅ Available Now</span>
+              <h1 class="az-hero-title" data-name>Profile</h1>
+              <div class="az-stars" aria-label="5 out of 5 stars">
+                <span class="stars-fill">★★★★★</span>
+              </div>
+              <p class="az-hero-headline" data-headline></p>
+              <p class="az-hero-meta" id="heroLocation"></p>
+              <div class="az-price">
+                <span class="az-price-symbol">$</span><span class="az-price-int" id="heroPrice">—</span><span class="az-price-dec">.00</span>
+                <span class="az-price-strike">Priceless value</span>
+              </div>
+              <p class="az-prime">✓ <strong>Prime</strong> — Available for immediate hire · Ships worldwide</p>
+              <div id="summaryText" class="az-hero-summary"></div>
+              <div class="az-hero-actions">
+                <button class="az-btn az-btn-cart" id="dealAddToCart">Add to Cart</button>
+                <button class="az-btn az-btn-buy" id="dealBuyNow">Buy Now</button>
               </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div class="hero-banner hero-banner-personalized">
-            <p class="badge badge-alt">Personalized</p>
-            <p class="signal-name" data-name></p>
-            <p class="signal-lines"><span id="signalWebsite"></span> · <span id="signalEmail"></span></p>
-            <div class="profile-art-slot" id="profileArt"></div>
-            <div id="profilesSection"></div>
-            <div class="profile-list" id="profilesGrid"></div>
+      <!-- ── Best Sellers: Skills ─────────────────────────────────── -->
+      <section id="skills" class="az-row">
+        <div class="az-row-head">
+          <h2>Best Sellers in <em>Technical Skills</em></h2>
+          <a href="#projects" class="az-see-more">See more →</a>
+        </div>
+        <div class="az-product-grid" id="skillsGrid"></div>
+      </section>
+
+      <!-- ── Featured Projects ────────────────────────────────────── -->
+      <section id="projects" class="az-row alt-row">
+        <div class="az-row-head">
+          <h2>Today's Deals: <em>Featured Projects</em></h2>
+          <a href="#reviews" class="az-see-more">See all reviews →</a>
+        </div>
+        <div class="az-product-grid" id="projectsGrid"></div>
+      </section>
+
+      <!-- ── Buy Again: Experience ────────────────────────────────── -->
+      <section id="experience" class="az-row">
+        <div class="az-row-head">
+          <h2>Buy Again: <em>Professional Experience</em></h2>
+        </div>
+        <div class="az-product-grid az-grid-wide" id="experienceGrid"></div>
+      </section>
+
+      <!-- ── Inspired by your search: Education / Certs / Awards ── -->
+      <section id="education" class="az-row alt-row">
+        <div class="az-row-head">
+          <h2>Inspired by Your Browsing: <em>Education &amp; Credentials</em></h2>
+        </div>
+        <div class="az-mini-grid">
+          <div class="az-mini-col">
+            <h3>Education</h3>
+            <div id="educationList"></div>
+          </div>
+          <div class="az-mini-col" id="certBlock">
+            <h3>Certifications</h3>
+            <div id="certificationsList"></div>
+          </div>
+          <div class="az-mini-col" id="awardsBlock">
+            <h3>Awards</h3>
+            <div id="awardsList"></div>
+          </div>
+          <div class="az-mini-col" id="langBlock">
+            <h3>Languages</h3>
+            <div id="languagesList"></div>
+          </div>
+          <div class="az-mini-col" id="interestsBlock">
+            <h3>Interests</h3>
+            <div id="interestsList"></div>
+          </div>
+          <div class="az-mini-col" id="publicationsBlock">
+            <h3>Publications</h3>
+            <div id="publicationsList"></div>
+          </div>
+          <div class="az-mini-col" id="volunteerBlock">
+            <h3>Volunteer</h3>
+            <div id="volunteerList"></div>
           </div>
         </div>
       </section>
 
-      <section class="strip-section">
-        <div class="container strip-grid">
-          <article class="strip-card">
-            <span class="strip-label">Buy Again: Headline</span>
-            <strong id="footerHeadline"></strong>
-          </article>
-          <article class="strip-card">
-            <span class="strip-label">Location</span>
-            <strong id="footerLocation"></strong>
-            <p class="strip-meta" id="heroLocation"></p>
-          </article>
-          <article class="strip-card">
-            <span class="strip-label">Store Links</span>
-            <div class="inline-links">
-              <a id="footerGithub" target="_blank" rel="noopener">GitHub</a>
-              <a id="footerLinkedin" target="_blank" rel="noopener">LinkedIn</a>
-              <a id="footerEmail" target="_blank" rel="noopener">Email</a>
+      <!-- ── Customer Reviews / References ────────────────────────── -->
+      <section id="reviews" class="az-row az-reviews-section" hidden>
+        <div class="az-row-head">
+          <h2>Customer Reviews</h2>
+        </div>
+        <div class="az-reviews-grid">
+          <aside class="az-reviews-summary">
+            <div class="az-reviews-score">
+              <div class="big-stars">★★★★★</div>
+              <div class="score-line">5 out of 5</div>
+              <div class="score-count" id="reviewCount"></div>
             </div>
-            <p class="strip-meta"><span id="projectCount"></span> · <span id="experienceCount"></span></p>
-          </article>
+          </aside>
+          <div class="az-reviews-list" id="referencesList"></div>
         </div>
       </section>
 
+      <div id="customSectionsContainer"></div>
 
-      <div id="experienceSection"></div>
-      <section id="experience" class="content-section">
-        <div class="container section-grid">
-          <div class="section-intro">
-            <p class="section-kicker">Buy Again</p>
-            <h2>Experience</h2>
-          </div>
-          <div class="section-body timeline" id="experienceList"></div>
-        </div>
-      </section>
-
-      <div id="projectsSection"></div>
-      <section id="projects" class="content-section alt-surface">
-        <div class="container section-grid">
-          <div class="section-intro">
-            <p class="section-kicker">Deal Of The Day</p>
-            <h2>Projects</h2>
-          </div>
-          <div class="section-body project-grid" id="projectsGrid"></div>
-        </div>
-      </section>
-
-      <section id="craft" class="content-section">
-        <div class="container craft-grid">
-          <div id="skillsSection"></div>
-          <section class="craft-panel" id="skills-section">
-            <div class="panel-head">
-              <p class="section-kicker">Filter By</p>
-              <h2>Skills</h2>
-            </div>
-            <div class="skills-cloud" id="skillsCloud"></div>
-          </section>
-
-          <div id="educationSection"></div>
-          <section class="craft-panel" id="education-section">
-            <div class="panel-head">
-              <p class="section-kicker">Buy Again</p>
-              <h2>Education</h2>
-            </div>
-            <div class="education-list" id="educationList"></div>
-          </section>
-
-          <div id="languagesSection"></div>
-          <section class="craft-panel" id="languages-section">
-            <div class="panel-head">
-              <p class="section-kicker">Languages</p>
-              <h2>Available</h2>
-            </div>
-            <div class="language-list" id="languagesList"></div>
-          </section>
-
-          <div id="interestsSection"></div>
-          <section class="craft-panel" id="interests-section">
-            <div class="panel-head">
-              <p class="section-kicker">Interests</p>
-              <h2>Categories</h2>
-            </div>
-            <div class="interests-list" id="interestsList"></div>
-          </section>
-
-          <div id="awardsSection"></div>
-          <section class="craft-panel" id="awards-section">
-            <div class="panel-head">
-              <p class="section-kicker">Best Seller</p>
-              <h2>Awards</h2>
-            </div>
-            <div class="awards-list" id="awardsList"></div>
-          </section>
-
-          <div id="certificationsSection"></div>
-          <section class="craft-panel" id="certifications-section">
-            <div class="panel-head">
-              <p class="section-kicker">Best Seller</p>
-              <h2>Certifications</h2>
-            </div>
-            <div class="certifications-list" id="certificationsList"></div>
-          </section>
-
-          <div id="publicationsSection"></div>
-          <section class="craft-panel" id="publications-section">
-            <div class="panel-head">
-              <p class="section-kicker">Publications</p>
-              <h2>Featured</h2>
-            </div>
-            <div class="publications-list" id="publicationsList"></div>
-          </section>
-
-          <div id="volunteerSection"></div>
-          <section class="craft-panel" id="volunteer-section">
-            <div class="panel-head">
-              <p class="section-kicker">Volunteer</p>
-              <h2>Community</h2>
-            </div>
-            <div class="volunteer-list" id="volunteerList"></div>
-          </section>
-
-          <div id="referencesSection"></div>
-          <section class="craft-panel" id="references-section">
-            <div class="panel-head">
-              <p class="section-kicker">References</p>
-              <h2>Trusted Reviews</h2>
-            </div>
-            <div class="references-list" id="referencesList"></div>
-          </section>
-
-          <div id="customSectionsContainer"></div>
+      <!-- ── Contact ─────────────────────────────────────────────── -->
+      <section id="contact" class="az-contact">
+        <h2>Contact the Seller</h2>
+        <p>Have questions about a specific project or skill? Reach out directly.</p>
+        <div class="az-contact-actions">
+          <a id="contactEmail" class="az-btn az-btn-buy" target="_blank" rel="noopener">📧 Email</a>
+          <a id="contactGithub" class="az-btn az-btn-cart" target="_blank" rel="noopener">GitHub</a>
+          <a id="contactLinkedin" class="az-btn az-btn-cart" target="_blank" rel="noopener">LinkedIn</a>
         </div>
       </section>
     </main>
+
+    <footer class="az-footer">
+      <button class="az-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top</button>
+      <div class="az-footer-mid">
+        <div>
+          <h4>Get to Know Me</h4>
+          <p id="footerHeadline"></p>
+          <p id="footerLocation"></p>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <a id="footerGithub" target="_blank" rel="noopener">GitHub</a><br>
+          <a id="footerLinkedin" target="_blank" rel="noopener">LinkedIn</a><br>
+          <a id="footerEmail">Email</a>
+        </div>
+        <div>
+          <h4>Inventory</h4>
+          <span id="projectCount"></span><br>
+          <span id="experienceCount"></span>
+        </div>
+      </div>
+      <div class="az-footer-bottom">
+        <span data-name></span> · Portfolio Shop · Built like Amazon.com
+      </div>
+    </footer>
   </div>
+
+  <!-- ── Shopping Cart slide-out ──────────────────────────────────── -->
+  <div class="az-cart-backdrop" id="cartBackdrop" hidden></div>
+  <aside class="az-cart-pane" id="cartPane" aria-label="Shopping cart" hidden>
+    <header class="az-cart-head">
+      <h2>Recruiter Cart <span class="muted" id="cartHeadCount">(0 items)</span></h2>
+      <button class="az-cart-close" id="cartClose" aria-label="Close cart">✕</button>
+    </header>
+    <div class="az-cart-body" id="cartItems">
+      <p class="az-cart-empty">Your Recruiter Cart is empty. Add skills or projects you'd like to "purchase".</p>
+    </div>
+    <footer class="az-cart-foot">
+      <div class="az-cart-subtotal">
+        Subtotal (<span id="cartFootCount">0</span> items): <strong>Let's talk!</strong>
+      </div>
+      <button class="az-btn az-btn-buy az-btn-block" id="checkoutBtn" disabled>Proceed to Checkout</button>
+      <p class="az-cart-fineprint">Checkout opens an email to start the conversation.</p>
+    </footer>
+  </aside>
+
+  <!-- ── Toast for "added to cart" feedback ───────────────────────── -->
+  <div class="az-toast" id="toast" hidden></div>
 
   <script src="../../config.js"></script>
   <script src="../../src/rxresume.js"></script>
